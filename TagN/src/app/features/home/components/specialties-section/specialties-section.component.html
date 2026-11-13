@@ -1,0 +1,40 @@
+<section class="section-specialties" id="atuacao">
+  <div class="section-container">
+    <header class="section-header-split">
+      <div class="header-left">
+        <span class="section-tag">ÁREAS DE ATUAÇÃO</span>
+        <h2 class="section-title">Saúde e estética,<br>em um mesmo cuidado.</h2>
+      </div>
+      <p class="header-context">
+        Duas áreas que se encontram em um propósito: cuidar de você com equilíbrio,
+        atenção e respeito à sua individualidade.
+      </p>
+    </header>
+
+    <div class="specialties-grid">
+      @for (specialty of specialties; track specialty.number) {
+        <article class="specialty-card">
+          <div class="specialty-card-top">
+            <span class="specialty-number">{{ specialty.number }}</span>
+            <svg class="specialty-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </div>
+          <h3 class="specialty-title">{{ specialty.title }}</h3>
+          <p class="specialty-desc">{{ specialty.description }}</p>
+          <div class="card-divider" role="separator"></div>
+          <div class="specialty-pillars">
+            @for (pillar of specialty.pillars; track pillar) {
+              <span class="pillar-tag">{{ pillar }}</span>
+            }
+          </div>
+        </article>
+      }
+    </div>
+
+    <p class="section-disclaimer">
+      A indicação de qualquer procedimento depende de avaliação clínica e das necessidades de cada pessoa.
+    </p>
+  </div>
+</section>

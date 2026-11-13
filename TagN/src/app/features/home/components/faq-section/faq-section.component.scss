@@ -1,0 +1,118 @@
+@use 'styles/variables' as *;
+
+.section-faq {
+  padding: $spacing-104 0;
+
+  @media (max-width: 992px) {
+    padding: $spacing-xl 0;
+  }
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: $spacing-110;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.faq-intro {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  .section-tag {
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+  }
+
+  .section-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-display-3;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-h2;
+    }
+  }
+
+  .faq-description {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+
+  .faq-cta-link {
+    font-size: $font-size-button;
+    color: $color-text-brand;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-brand-dark;
+    }
+  }
+}
+
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-top: $border-width solid $color-border-primary;
+
+  &:last-child {
+    border-bottom: $border-width solid $color-border-primary;
+  }
+
+  .faq-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: $spacing-26 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: $spacing-lg;
+
+    .faq-question {
+      font-family: $font-family-serif;
+      font-size: $font-size-h6;
+      color: $color-brand-dark;
+    }
+
+    .faq-toggle-icon {
+      font-size: $font-size-h5;
+      color: $color-brand-primary;
+      font-weight: $font-weight-regular;
+    }
+  }
+
+  .faq-panel {
+    padding: 0 0 $spacing-26;
+
+    .faq-answer {
+      font-size: $font-size-body;
+      color: $color-text-secondary;
+      line-height: $line-height-body;
+      margin: 0;
+    }
+  }
+}

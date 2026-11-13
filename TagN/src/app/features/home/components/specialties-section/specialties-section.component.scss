@@ -1,0 +1,138 @@
+@use 'styles/variables' as *;
+
+.section-specialties {
+  padding: $spacing-104 0;
+
+  @media (max-width: 992px) {
+    padding: $spacing-xl 0;
+  }
+}
+
+.section-container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.section-header-split {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+    margin-bottom: $spacing-14;
+  }
+
+  .section-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-display-3;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-h2;
+    }
+  }
+
+  .header-context {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    max-width: 400px;
+    margin: 0;
+  }
+}
+
+.specialties-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-28;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.specialty-card {
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-36;
+  background-color: $color-bg-secondary;
+  gap: $spacing-lg;
+
+  .specialty-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .specialty-number {
+      font-family: $font-family-serif;
+      font-size: $font-size-h8;
+      color: $color-brand-rose;
+    }
+
+    .specialty-arrow {
+      width: $spacing-22;
+      height: $spacing-22;
+      color: $color-brand-rose;
+    }
+  }
+
+  .specialty-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-h2;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+  }
+
+  .specialty-desc {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .card-divider {
+    height: $border-width;
+    background-color: $color-border-primary;
+  }
+
+  .specialty-pillars {
+    display: flex;
+    gap: $spacing-22;
+    flex-wrap: wrap;
+
+    .pillar-tag {
+      font-size: $font-size-badge;
+      color: $color-text-brand;
+      letter-spacing: $letter-spacing-wide;
+    }
+  }
+}
+
+.section-disclaimer {
+  font-size: $font-size-caption;
+  color: $color-text-secondary;
+  margin: 0;
+}

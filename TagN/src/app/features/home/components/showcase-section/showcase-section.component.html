@@ -1,0 +1,33 @@
+<section class="section-showcase" id="trabalhos">
+  <div class="section-container">
+    <header class="section-header-split">
+      <div class="header-left">
+        <span class="section-tag">UM OLHAR SOBRE O TRABALHO</span>
+        <h2 class="section-title">Cuidado em cada detalhe.</h2>
+      </div>
+      <p class="header-context">
+        Um espaço para conhecer o trabalho da Dra. Marcela por meio de registros reais.
+      </p>
+    </header>
+
+    <div class="showcase-grid">
+      @for (item of showcaseItems; track item.title) {
+        <article class="showcase-card">
+          <div class="showcase-media">
+            <img
+              [ngSrc]="item.image"
+              [width]="item.width"
+              [height]="item.height"
+              [alt]="item.title"
+              class="showcase-img">
+            <div class="showcase-frame-border" aria-hidden="true"></div>
+          </div>
+          <div class="showcase-info">
+            <h3 class="showcase-title">{{ item.title }}</h3>
+            <span class="showcase-category">{{ item.category }}</span>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

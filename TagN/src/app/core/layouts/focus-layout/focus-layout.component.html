@@ -1,0 +1,43 @@
+<div class="focus-layout">
+  <!-- Header minimalista do layout focado -->
+  <header class="focus-header">
+    <div class="focus-header-container">
+      <!-- Marca à esquerda -->
+      <a routerLink="/" class="brand" aria-label="Retornar à página inicial">
+        <span class="brand-name">Drª. Marcela Medeiros</span>
+        <span class="brand-tagline">ODONTOLOGIA &amp; HARMONIZAÇÃO</span>
+      </a>
+
+      <!-- Título central dinâmico -->
+      <div class="header-center" role="heading" aria-level="1">
+        <span class="focus-title">{{ headerTitle() }}</span>
+      </div>
+
+      <!-- Ação de retorno à direita -->
+      <div class="header-right">
+        <a routerLink="/" class="back-link" aria-label="Voltar ao site">
+          <div class="back-icon-circle" aria-hidden="true">
+            <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </div>
+          <span class="back-link-label">Voltar ao site</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo renderizado das rotas focadas (login, cadastro, agendamento) -->
+  <main class="focus-main">
+    <router-outlet />
+  </main>
+
+  <!-- Rodapé minimalista com a assinatura institucional -->
+  <footer class="focus-footer">
+    <div class="focus-footer-container">
+      <p class="focus-footer-slogan">Cuidado que respeita quem você é.</p>
+      <p class="focus-footer-info">Drª. Marcela Medeiros · Odontologia e Harmonização Facial</p>
+    </div>
+  </footer>
+</div>

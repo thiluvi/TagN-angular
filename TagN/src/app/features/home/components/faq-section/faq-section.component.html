@@ -1,0 +1,45 @@
+<section class="section-faq" id="duvidas">
+  <div class="section-container faq-grid">
+    <div class="faq-intro">
+      <span class="section-tag">PARA SE SENTIR À VONTADE</span>
+      <h2 class="section-title">Algumas dúvidas,<br>numa conversa.</h2>
+      <p class="faq-description">
+        Informação também faz parte do cuidado. Aqui estão algumas respostas para o seu primeiro passo.
+      </p>
+      <a routerLink="/agendamento" class="faq-cta-link">
+        Ainda tem uma dúvida? Vamos conversar ↗
+      </a>
+    </div>
+
+    <div class="faq-accordion" role="region" aria-label="Perguntas e respostas frequentes">
+      @for (item of faqList; track item.id) {
+        <div class="faq-item" [class.faq-item--expanded]="expandedFaq() === item.id">
+          <button
+            type="button"
+            class="faq-trigger"
+            (click)="toggleFaq(item.id)"
+            [attr.aria-expanded]="expandedFaq() === item.id"
+            [attr.aria-controls]="'faq-panel-' + item.id">
+            <span class="faq-question">{{ item.question }}</span>
+            <span class="faq-toggle-icon" aria-hidden="true">
+              @if (expandedFaq() === item.id) {
+                −
+              } @else {
+                +
+              }
+            </span>
+          </button>
+
+          @if (expandedFaq() === item.id) {
+            <div
+              [id]="'faq-panel-' + item.id"
+              class="faq-panel"
+              role="region">
+              <p class="faq-answer">{{ item.answer }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

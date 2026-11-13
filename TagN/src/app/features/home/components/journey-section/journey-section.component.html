@@ -1,0 +1,19 @@
+<section class="section-journey" aria-label="Jornada da consulta">
+  <div class="section-container">
+    <header class="journey-header">
+      <span class="section-tag">DO PRIMEIRO CONTATO AO CUIDADO</span>
+      <h2 class="section-title">Tudo começa com uma avaliação.</h2>
+    </header>
+
+    <div class="journey-grid">
+      @for (step of journeySteps; track step.number) {
+        <article class="journey-step">
+          <span class="journey-number">{{ step.number }}</span>
+          <div class="card-divider" role="separator"></div>
+          <h3 class="journey-title">{{ step.title }}</h3>
+          <p class="journey-desc">{{ step.description }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>

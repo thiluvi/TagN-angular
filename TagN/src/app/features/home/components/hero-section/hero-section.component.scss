@@ -1,0 +1,195 @@
+@use 'styles/variables' as *;
+
+.section-hero {
+  padding: $spacing-56 0 $spacing-72;
+  background-color: $color-bg-primary;
+
+  @media (max-width: 992px) {
+    padding: $spacing-xl 0;
+  }
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+  gap: $spacing-72;
+
+  @media (max-width: 1100px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-xl;
+  }
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-30;
+  max-width: 580px;
+
+  .hero-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-hero;
+    line-height: $line-height-tight;
+    color: $color-brand-dark;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-display-3;
+    }
+  }
+
+  .hero-highlight {
+    color: $color-brand-rose;
+  }
+
+  .hero-description {
+    font-size: $font-size-body;
+    line-height: $line-height-body;
+    color: $color-text-secondary;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-28;
+    height: $button-height;
+    padding: 0 $button-padding-x;
+    background-color: $color-bg-brand;
+    color: $color-text-light;
+    border-radius: $button-border-radius;
+    font-size: $button-font-size;
+    font-weight: $button-font-weight;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      width: $spacing-18;
+      height: $spacing-18;
+    }
+  }
+
+  .link-secondary {
+    font-size: $font-size-caption;
+    color: $color-text-brand;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-brand-dark;
+    }
+  }
+}
+
+.hero-signature {
+  display: flex;
+  align-items: center;
+  gap: $spacing-14;
+  padding-top: $spacing-18;
+
+  .decorative-rule {
+    width: $spacing-36;
+    height: $border-width;
+    background-color: $color-brand-gold;
+  }
+
+  .signature-text {
+    font-family: $font-family-serif;
+    font-style: italic;
+    font-size: $font-size-quote;
+    color: $color-text-secondary;
+  }
+}
+
+.hero-media {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 504px;
+
+  @media (max-width: 1100px) {
+    max-width: 100%;
+  }
+
+  .photo-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 504 / 596;
+    overflow: hidden;
+    background-color: $color-bg-secondary;
+
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-badge {
+      position: absolute;
+      left: $spacing-14;
+      bottom: $spacing-18;
+      background-color: $color-brand-rose;
+      color: $color-text-light;
+      font-size: $font-size-badge;
+      padding: $spacing-xs $spacing-10;
+      letter-spacing: $letter-spacing-wide;
+    }
+  }
+}
+
+.section-principles {
+  background-color: $color-bg-secondary;
+  border-top: $border-width solid $color-border-primary;
+  border-bottom: $border-width solid $color-border-primary;
+  padding: $spacing-28 0;
+}
+
+.principles-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x-wide;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+    gap: $spacing-md;
+  }
+
+  .principle-item {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-15;
+
+    .principle-dash {
+      width: $spacing-20;
+      height: $border-width;
+      background-color: $color-brand-gold;
+    }
+
+    .principle-text {
+      font-size: $font-size-caption;
+      color: $color-text-brand;
+    }
+  }
+}

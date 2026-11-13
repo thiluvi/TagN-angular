@@ -1,0 +1,90 @@
+@use 'styles/variables' as *;
+
+.section-journey {
+  padding: $spacing-3xl 0;
+  background-color: $color-bg-secondary;
+
+  @media (max-width: 992px) {
+    padding: $spacing-xl 0;
+  }
+}
+
+.section-container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.journey-header {
+  margin-bottom: $spacing-xl;
+
+  .section-tag {
+    display: inline-block;
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+    margin-bottom: $spacing-14;
+  }
+
+  .section-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-display-3;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-h2;
+    }
+  }
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-36;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.journey-step {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-23;
+
+  .journey-number {
+    font-family: $font-family-serif;
+    font-size: $font-size-h1;
+    color: $color-brand-rose;
+  }
+
+  .card-divider {
+    height: $border-width;
+    background-color: $color-border-primary;
+  }
+
+  .journey-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-h4;
+    color: $color-brand-dark;
+    margin: 0;
+  }
+
+  .journey-desc {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+}

@@ -1,0 +1,117 @@
+@use 'styles/variables' as *;
+
+.section-showcase {
+  padding: $spacing-104 0;
+
+  @media (max-width: 992px) {
+    padding: $spacing-xl 0;
+  }
+}
+
+.section-container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.section-header-split {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+    margin-bottom: $spacing-14;
+  }
+
+  .section-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-display-3;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-h2;
+    }
+  }
+
+  .header-context {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    max-width: 400px;
+    margin: 0;
+  }
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  align-items: flex-end;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.showcase-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-18;
+
+  .showcase-media {
+    position: relative;
+    padding: $spacing-lg;
+    background-color: $color-bg-tertiary;
+
+    .showcase-img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .showcase-frame-border {
+      position: absolute;
+      inset: $spacing-20;
+      border: $border-width solid $color-border-light;
+      pointer-events: none;
+    }
+  }
+
+  .showcase-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .showcase-title {
+      font-family: $font-family-serif;
+      font-size: $font-size-h5;
+      color: $color-brand-dark;
+      margin: 0;
+    }
+
+    .showcase-category {
+      font-size: $font-size-caption;
+      color: $color-text-secondary;
+    }
+  }
+}

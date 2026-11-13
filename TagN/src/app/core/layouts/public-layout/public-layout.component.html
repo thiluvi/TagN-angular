@@ -1,0 +1,118 @@
+<div class="public-layout">
+  <header class="public-header">
+    <div class="header-container">
+      <!-- Logo / Marca institucional -->
+      <a routerLink="/" class="brand" (click)="closeMobileMenu()" aria-label="Ir para a página inicial">
+        <span class="brand-name">Drª. Marcela Medeiros</span>
+        <span class="brand-tagline">ODONTOLOGIA &amp; HARMONIZAÇÃO</span>
+      </a>
+
+      <!-- Links de navegação no centro (desktop) -->
+      <nav class="desktop-nav" aria-label="Navegação institucional">
+        <a routerLink="/" fragment="sobre" class="nav-link">A Dra. Marcela</a>
+        <a routerLink="/" fragment="atuacao" class="nav-link">Áreas de atuação</a>
+        <a routerLink="/" fragment="trabalhos" class="nav-link">Trabalhos</a>
+        <a routerLink="/" fragment="duvidas" class="nav-link">Dúvidas frequentes</a>
+        <a routerLink="/agendamento" class="nav-link nav-link--cta">Agendar consulta</a>
+      </nav>
+
+      <!-- Ações no canto direito -->
+      <div class="header-actions">
+        <!-- Ícone / Botão circular de acesso à conta -->
+        <a routerLink="/login" class="account-btn" aria-label="Acessar conta" title="Acessar conta">
+          <svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+
+        <!-- Botão hambúrguer para mobile -->
+        <button
+          type="button"
+          class="menu-toggle"
+          (click)="toggleMobileMenu()"
+          [attr.aria-expanded]="isMobileMenuOpen()"
+          aria-label="Abrir ou fechar menu de navegação">
+          @if (isMobileMenuOpen()) {
+            <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          } @else {
+            <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Gaveta de navegação mobile -->
+    @if (isMobileMenuOpen()) {
+      <nav class="mobile-nav" aria-label="Menu móvel">
+        <a routerLink="/" fragment="sobre" class="mobile-nav-link" (click)="closeMobileMenu()">A Dra. Marcela</a>
+        <a routerLink="/" fragment="atuacao" class="mobile-nav-link" (click)="closeMobileMenu()">Áreas de atuação</a>
+        <a routerLink="/" fragment="trabalhos" class="mobile-nav-link" (click)="closeMobileMenu()">Trabalhos</a>
+        <a routerLink="/" fragment="duvidas" class="mobile-nav-link" (click)="closeMobileMenu()">Dúvidas frequentes</a>
+        <a routerLink="/agendamento" class="mobile-nav-link mobile-nav-link--cta" (click)="closeMobileMenu()">Agendar consulta</a>
+        <a routerLink="/login" class="mobile-nav-link" (click)="closeMobileMenu()">Acessar conta</a>
+      </nav>
+    }
+  </header>
+
+  <!-- Conteúdo renderizado pelas rotas -->
+  <main class="main-content">
+    <router-outlet />
+  </main>
+
+  <!-- Rodapé Institucional Completo -->
+  <footer class="public-footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Coluna 1: Marca e Slogan -->
+        <div class="footer-col footer-col--brand">
+          <div class="brand">
+            <span class="brand-name">Drª. Marcela Medeiros</span>
+            <span class="brand-tagline">ODONTOLOGIA &amp; HARMONIZAÇÃO</span>
+          </div>
+          <p class="footer-slogan">Seu sorriso. Sua essência. Em harmonia.</p>
+        </div>
+
+        <!-- Coluna 2: Navegação Explore -->
+        <div class="footer-col">
+          <h2 class="footer-col-title">EXPLORE</h2>
+          <ul class="footer-links">
+            <li><a routerLink="/" fragment="sobre" class="footer-link">A Dra. Marcela</a></li>
+            <li><a routerLink="/" fragment="atuacao" class="footer-link">Áreas de atuação</a></li>
+            <li><a routerLink="/" fragment="trabalhos" class="footer-link">Trabalhos</a></li>
+            <li><a routerLink="/" fragment="duvidas" class="footer-link">Dúvidas frequentes</a></li>
+            <li><a routerLink="/agendamento" class="footer-link footer-link--highlight">Agendar consulta</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 3: Onde nos encontrar -->
+        <div class="footer-col">
+          <h2 class="footer-col-title">ONDE NOS ENCONTRAR</h2>
+          <div class="footer-info">
+            <p class="footer-info-item">
+              <span class="footer-icon" aria-hidden="true">📍</span>
+              Avenida Pedroso de Morais, 631 – Conj. 27, Pinheiros, São Paulo – SP
+            </p>
+            <p class="footer-info-item">
+              Horários de atendimento: Seg a Sex, das 8h às 19h
+            </p>
+            <p class="footer-cro">Registro profissional / CRO: 121411</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider" role="separator"></div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© Drª. Marcela Medeiros · Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+</div>

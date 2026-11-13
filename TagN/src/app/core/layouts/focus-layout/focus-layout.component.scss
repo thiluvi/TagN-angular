@@ -1,0 +1,208 @@
+@use 'styles/variables' as *;
+
+.focus-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $color-bg-primary;
+  color: $color-text-secondary;
+}
+
+// -----------------------------------------------------------------------------
+// Header Minimalista (Focus Layout)
+// -----------------------------------------------------------------------------
+.focus-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: $color-bg-primary;
+  border-bottom: $border-width solid $color-border-primary;
+  width: 100%;
+}
+
+.focus-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+  min-height: $spacing-112;
+  gap: $spacing-lg;
+
+  @media (max-width: 1200px) {
+    padding: 0 $spacing-xl;
+    min-height: $spacing-80;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 $spacing-lg;
+    min-height: $spacing-72;
+  }
+}
+
+// Marca
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+
+  .brand-name {
+    font-family: $font-family-serif;
+    font-size: $font-size-h5;
+    color: $color-brand-dark;
+    letter-spacing: $letter-spacing-normal;
+    line-height: $line-height-tight;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-quote;
+    }
+  }
+
+  .brand-tagline {
+    font-family: $font-family-sans;
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+
+    @media (max-width: 576px) {
+      display: none;
+    }
+  }
+}
+
+// Título Central Dinâmico
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1 1 auto;
+  padding: 0 $spacing-md;
+
+  .focus-title {
+    font-family: $font-family-sans;
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+  }
+}
+
+// Ação de Retorno (Direita)
+.header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-10;
+  text-decoration: none;
+  color: $color-brand-primary;
+  transition: color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    color: $color-brand-dark;
+    transform: translateX(-2px);
+
+    .back-icon-circle {
+      background-color: $color-bg-brand;
+      color: $color-text-light;
+    }
+  }
+
+  .back-icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: $spacing-38;
+    height: $spacing-38;
+    border-radius: $border-radius-pill;
+    border: $border-width solid $color-border-brand;
+    background-color: transparent;
+    color: $color-brand-primary;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    .back-icon {
+      width: $spacing-18;
+      height: $spacing-18;
+    }
+  }
+
+  .back-link-label {
+    font-family: $font-family-sans;
+    font-size: $font-size-caption;
+    font-weight: $font-weight-regular;
+
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Conteúdo Principal
+// -----------------------------------------------------------------------------
+.focus-main {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// Rodapé Minimalista
+// -----------------------------------------------------------------------------
+.focus-footer {
+  flex-shrink: 0;
+  background-color: $color-bg-primary;
+  border-top: $border-width solid $color-border-primary;
+  padding: $spacing-28 0;
+  width: 100%;
+}
+
+.focus-footer-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x;
+  gap: $spacing-md;
+
+  @media (max-width: 1200px) {
+    padding: 0 $spacing-xl;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 $spacing-lg;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.focus-footer-slogan {
+  font-family: $font-family-serif;
+  font-style: italic;
+  font-size: $font-size-quote;
+  color: $color-brand-primary;
+  margin: 0;
+  line-height: $line-height-snug;
+}
+
+.focus-footer-info {
+  font-family: $font-family-sans;
+  font-size: $font-size-caption;
+  color: $color-text-secondary;
+  margin: 0;
+}

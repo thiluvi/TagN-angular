@@ -1,0 +1,155 @@
+// ==============================================================================
+// Design System Tokens - TagN Odonto e Harmonização
+// Inspecionado do Figma: Drª. Marcela Medeiros — Página inicial (Node: 6:1193)
+// ==============================================================================
+
+// ------------------------------------------------------------------------------
+// 1. CORES (Color Palette)
+// ------------------------------------------------------------------------------
+
+// Cores de Fundo (Backgrounds)
+$color-bg-primary: #fbf8f5;       // Fundo principal (warm cream / off-white)
+$color-bg-secondary: #f3ece6;     // Superfícies secundárias, cards, faixas de princípios
+$color-bg-tertiary: #eaddd5;      // Fundo dos contêineres de fotografia e acervo
+$color-bg-muted: #ded0c7;         // Variação quente de fundo para fotos
+$color-bg-accent-blush: #fadfda;  // Rosa/blush suave da seção de convite e destaque
+$color-bg-brand: #755b53;         // Marrom quente institucional (fundo de botões e destaques)
+
+// Cores de Marca e Destaque (Brand & Accents)
+$color-brand-primary: #755b53;     // Marrom assinatura da marca
+$color-brand-dark: #57413a;        // Marrom profundo (títulos de maior peso)
+$color-brand-gold: #c6a783;        // Dourado/areia quente para traços decorativos
+$color-brand-rose: #957c73;        // Tom rosado terroso (numerais de etapas, tags)
+$color-brand-blush: #fadfda;       // Blush suave para realce editorial
+
+// Tipografia e Cores de Texto (Text Colors)
+$color-text-primary: #57413a;      // Títulos principais, cabeçalhos e grande impacto
+$color-text-secondary: #88736b;    // Corpo de texto, parágrafos e descrições
+$color-text-muted: #957c73;        // Numerais de seções, indicadores e legendas
+$color-text-brand: #755b53;        // Rótulos em caixa alta, subtítulos de seção e links
+$color-text-light: #fff9f3;        // Texto invertido (sobre botão marrom) e molduras
+$color-text-gold: #c6a783;         // Destaque dourado
+
+// Bordas e Divisores (Borders & Dividers)
+$color-border-primary: #dccfc6;    // Divisores horizontais, contornos de botões secundários
+$color-border-gold: #c6a783;       // Traços ornamentais e divisores de destaque
+$color-border-brand: #755b53;      // Bordas institucionais e ícones circulares
+$color-border-light: rgba(255, 249, 243, 0.65); // Molduras editoriais sobre fotos
+
+// ------------------------------------------------------------------------------
+// 2. TIPOGRAFIA (Typography)
+// ------------------------------------------------------------------------------
+
+// Famílias Tipográficas
+$font-family-serif: 'Cormorant Garamond', Georgia, serif;
+$font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+$font-family-base: $font-family-sans;
+$font-family-heading: $font-family-serif;
+
+// Pesos de Fonte (Font Weights)
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+
+// Tamanhos de Fonte (Font Sizes)
+$font-size-hero: 5rem;            // 80px - Título principal / Hero
+$font-size-display-1: 4rem;       // 64px - Convite final ("Vamos cuidar de você")
+$font-size-display-2: 3.8125rem;   // 61px - Filosofia ("Não se trata de mudar...")
+$font-size-display-3: 3.5rem;      // 56px - Títulos de seções principais
+$font-size-h1: 2.875rem;          // 46px - Numerais das etapas
+$font-size-h2: 2.5rem;            // 40px - Títulos de especialidades
+$font-size-h3: 1.875rem;          // 30px - Assinatura da doutora (itálico)
+$font-size-h4: 1.8125rem;         // 29px - Títulos de etapas
+$font-size-h5: 1.75rem;           // 28px - Títulos de cards da vitrine
+$font-size-h6: 1.6875rem;         // 27px - Perguntas frequentes
+$font-size-h7: 1.5625rem;         // 25px - Título de perguntas recolhidas
+$font-size-h8: 1.5rem;            // 24px - Numerais de cards / rodapé slogan
+$font-size-quote: 1.3125rem;      // 21px - Assinatura de cuidado (itálico)
+$font-size-body: 1rem;            // 16px - Texto corrido / introdução
+$font-size-body-sm: 0.875rem;     // 14px - Filosofia complementar
+$font-size-button: 0.8125rem;     // 13px - Texto de botões e links secundários
+$font-size-caption: 0.75rem;      // 12px - Princípios e links sublinhados
+$font-size-badge: 0.6875rem;      // 11px - Rótulos de seção uppercase, tags, notas
+$font-size-legal: 0.625rem;       // 10px - Direitos reservados / rodapé legal
+
+// Alturas de Linha (Line Heights)
+$line-height-tight: 0.99;
+$line-height-title: 1.04;
+$line-height-quote: 1.08;
+$line-height-heading: 1.2;
+$line-height-snug: 1.5;
+$line-height-body-sm: 1.6;
+$line-height-legal: 1.7;
+$line-height-body: 1.75;
+$line-height-loose: 1.8;
+
+// Espaçamento entre Letras (Letter Spacing)
+$letter-spacing-tight: -0.02em;
+$letter-spacing-normal: normal;
+$letter-spacing-wide: 0.05em;
+$letter-spacing-caps: 0.12em;     // Para tags e cabeçalhos em caixa alta
+
+// ------------------------------------------------------------------------------
+// 3. ESPAÇAMENTOS (Spacings)
+// ------------------------------------------------------------------------------
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-10: 10px;
+$spacing-14: 14px;
+$spacing-15: 15px;
+$spacing-md: 16px;
+$spacing-18: 18px;
+$spacing-20: 20px;
+$spacing-22: 22px;
+$spacing-23: 23px;
+$spacing-lg: 24px;
+$spacing-25: 25px;
+$spacing-26: 26px;
+$spacing-28: 28px;
+$spacing-30: 30px;
+$spacing-32: 32px;
+$spacing-36: 36px;
+$spacing-38: 38px;
+$spacing-40: 40px;
+$spacing-42: 42px;
+$spacing-xl: 48px;
+$spacing-56: 56px;
+$spacing-60: 60px;
+$spacing-2xl: 64px;
+$spacing-72: 72px;
+$spacing-80: 80px;
+$spacing-3xl: 88px;
+$spacing-96: 96px;
+$spacing-100: 100px;
+$spacing-104: 104px;
+$spacing-110: 110px;
+$spacing-112: 112px;
+$spacing-128: 128px;
+$spacing-130: 130px;
+
+// Layout de Seções (Container & Section Layout)
+$container-max-width: 1440px;
+$section-padding-x: 88px;
+$section-padding-x-wide: 112px;
+$section-padding-y: 88px;
+$section-padding-y-spacious: 104px;
+
+// ------------------------------------------------------------------------------
+// 4. COMPONENTES & BORDAS (Components & Borders)
+// ------------------------------------------------------------------------------
+
+$border-width: 1px;
+$border-radius-sm: 2px;
+$border-radius-pill: 9999px;
+
+$button-height: 56px;
+$button-padding-x: 25px;
+$button-border-radius: 2px;
+$button-font-size: $font-size-button;
+$button-font-weight: $font-weight-medium;
+
+$navbar-height: 128px;
+
+

@@ -1,0 +1,113 @@
+@use 'styles/variables' as *;
+
+.section-cta {
+  padding: $spacing-80 0;
+  background-color: $color-bg-accent-blush;
+}
+
+.cta-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $section-padding-x-wide;
+  gap: $spacing-130;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-xl;
+    padding: 0 $spacing-xl;
+  }
+
+  @media (max-width: 992px) {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.cta-message {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  .section-tag {
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+    letter-spacing: $letter-spacing-caps;
+  }
+
+  .cta-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-display-1;
+    line-height: $line-height-title;
+    color: $color-brand-dark;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: $font-size-display-3;
+    }
+  }
+
+  .cta-description {
+    font-size: $font-size-body;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+}
+
+.cta-action-box {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-22;
+  flex-shrink: 0;
+  max-width: 340px;
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-28;
+    height: $button-height;
+    padding: 0 $button-padding-x;
+    background-color: $color-bg-brand;
+    color: $color-text-light;
+    border-radius: $button-border-radius;
+    font-size: $button-font-size;
+    font-weight: $button-font-weight;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      width: $spacing-18;
+      height: $spacing-18;
+    }
+  }
+
+  .cta-contact-text {
+    font-size: $font-size-caption;
+    color: $color-text-brand;
+    line-height: $line-height-loose;
+    margin: 0;
+  }
+
+  .cta-divider {
+    width: $spacing-xl;
+    height: $border-width;
+    background-color: $color-brand-gold;
+  }
+
+  .cta-note {
+    font-size: $font-size-badge;
+    color: $color-text-secondary;
+    line-height: $line-height-legal;
+    margin: 0;
+  }
+}
