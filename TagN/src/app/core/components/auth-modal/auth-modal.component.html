@@ -1,0 +1,198 @@
+@if (authService.isAuthModalOpen()) {
+  <div
+    class="modal-backdrop"
+    (click)="onBackdropClick($event)"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="authService.authModalMode() === 'login' ? 'Modal de Login' : 'Modal de Cadastro'">
+    
+    <div class="modal-card">
+      <!-- Botão Fechar -->
+      <button
+        type="button"
+        class="btn-close"
+        (click)="close()"
+        aria-label="Fechar modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Alternador de Modos (Tabs) -->
+      <div class="modal-tabs" role="tablist">
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [attr.aria-selected]="authService.authModalMode() === 'login'"
+          [class.tab-btn--active]="authService.authModalMode() === 'login'"
+          (click)="switchMode('login')">
+          Entrar
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [attr.aria-selected]="authService.authModalMode() === 'register'"
+          [class.tab-btn--active]="authService.authModalMode() === 'register'"
+          (click)="switchMode('register')">
+          Criar conta
+        </button>
+      </div>
+
+      <!-- Cabeçalho -->
+      <div class="modal-header">
+        @if (authService.authModalMode() === 'login') {
+          <h2 class="modal-title">Login</h2>
+          <p class="modal-subtitle">Seja bem-vindo(a) de volta!</p>
+        } @else {
+          <h2 class="modal-title">Criar conta</h2>
+          <p class="modal-subtitle">Cadastre-se para cuidar de você.</p>
+        }
+      </div>
+
+      <!-- Alerta de Erro -->
+      @if (errorMessage()) {
+        <div class="alert-error" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Formulário de Login -->
+      @if (authService.authModalMode() === 'login') {
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="login-email" class="form-label">E-mail</label>
+            <input
+              id="login-email"
+              type="email"
+              formControlName="email"
+              placeholder="seuemail@exemplo.com"
+              class="form-input"
+              autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" class="form-label">Senha</label>
+            <input
+              id="login-password"
+              type="password"
+              formControlName="password"
+              placeholder="Sua senha"
+              class="form-input"
+              autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="btn-submit">
+            Entrar
+          </button>
+
+          <div class="form-footer">
+            <button type="button" class="link-btn" (click)="switchMode('register')">
+              Criar conta
+            </button>
+            <span class="footer-divider" aria-hidden="true">·</span>
+            <button type="button" class="link-btn" (click)="errorMessage.set('Recuperação de senha enviada para seu e-mail caso cadastrado.')">
+              Esqueci minha senha
+            </button>
+          </div>
+        </form>
+      }
+
+      <!-- Formulário de Cadastro -->
+      @if (authService.authModalMode() === 'register') {
+        <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="reg-name" class="form-label">Nome completo</label>
+            <input
+              id="reg-name"
+              type="text"
+              formControlName="name"
+              placeholder="Seu nome completo"
+              class="form-input"
+              autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="reg-email" class="form-label">E-mail</label>
+            <input
+              id="reg-email"
+              type="email"
+              formControlName="email"
+              placeholder="seuemail@exemplo.com"
+              class="form-input"
+              autocomplete="email">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-phone" class="form-label">Celular</label>
+              <input
+                id="reg-phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="(11) 90000-0000"
+                class="form-input"
+                autocomplete="tel">
+            </div>
+
+            <div class="form-group">
+              <label for="reg-cpf" class="form-label">CPF</label>
+              <input
+                id="reg-cpf"
+                type="text"
+                formControlName="cpf"
+                placeholder="000.000.000-00"
+                class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-birthDate" class="form-label">Data de Nasc.</label>
+            <input
+              id="reg-birthDate"
+              type="date"
+              formControlName="birthDate"
+              class="form-input">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-password" class="form-label">Senha</label>
+              <input
+                id="reg-password"
+                type="password"
+                formControlName="password"
+                placeholder="Mínimo 6 dígitos"
+                class="form-input"
+                autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+              <label for="reg-confirmPassword" class="form-label">Confirme a senha</label>
+              <input
+                id="reg-confirmPassword"
+                type="password"
+                formControlName="confirmPassword"
+                placeholder="Repita sua senha"
+                class="form-input"
+                autocomplete="new-password">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            Criar conta
+          </button>
+
+          <div class="form-footer">
+            <span class="footer-text">Já tem uma conta?</span>
+            <button type="button" class="link-btn link-btn--highlight" (click)="switchMode('login')">
+              Entrar
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+}

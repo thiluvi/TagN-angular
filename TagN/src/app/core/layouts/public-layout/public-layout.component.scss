@@ -8,7 +8,9 @@
   color: $color-text-secondary;
 }
 
-// Header
+// -----------------------------------------------------------------------------
+// Header Institucional
+// -----------------------------------------------------------------------------
 .public-header {
   position: sticky;
   top: 0;
@@ -95,27 +97,6 @@
   gap: $spacing-md;
 }
 
-.account-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: $spacing-38;
-  height: $spacing-38;
-  border-radius: $border-radius-pill;
-  border: $border-width solid $color-border-brand;
-  color: $color-brand-primary;
-
-  &:hover {
-    background-color: $color-bg-brand;
-    color: $color-text-light;
-  }
-
-  .account-icon {
-    width: $spacing-18;
-    height: $spacing-18;
-  }
-}
-
 .menu-toggle {
   display: none;
   align-items: center;
@@ -163,13 +144,30 @@
       border-bottom: none;
     }
   }
+
+  .mobile-nav-btn {
+    background: transparent;
+    border: none;
+    padding: $spacing-sm 0;
+    text-align: left;
+    font-size: $font-size-body-sm;
+    color: $color-text-brand;
+    cursor: pointer;
+    border-bottom: $border-width solid $color-border-primary;
+
+    &:hover {
+      color: $color-brand-dark;
+    }
+  }
 }
 
 .main-content {
   flex: 1 0 auto;
 }
 
-// Footer
+// -----------------------------------------------------------------------------
+// Rodapé Institucional
+// -----------------------------------------------------------------------------
 .public-footer {
   flex-shrink: 0;
   background-color: $color-bg-secondary;

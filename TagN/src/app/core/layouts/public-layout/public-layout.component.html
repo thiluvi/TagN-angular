@@ -18,13 +18,8 @@
 
       <!-- Ações no canto direito -->
       <div class="header-actions">
-        <!-- Ícone / Botão circular de acesso à conta -->
-        <a routerLink="/login" class="account-btn" aria-label="Acessar conta" title="Acessar conta">
-          <svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </a>
+        <!-- Widget com Botão e Overlay de Perfil -->
+        <app-profile-menu />
 
         <!-- Botão hambúrguer para mobile -->
         <button
@@ -57,7 +52,8 @@
         <a routerLink="/" fragment="trabalhos" class="mobile-nav-link" (click)="closeMobileMenu()">Trabalhos</a>
         <a routerLink="/" fragment="duvidas" class="mobile-nav-link" (click)="closeMobileMenu()">Dúvidas frequentes</a>
         <a routerLink="/agendamento" class="mobile-nav-link mobile-nav-link--cta" (click)="closeMobileMenu()">Agendar consulta</a>
-        <a routerLink="/login" class="mobile-nav-link" (click)="closeMobileMenu()">Acessar conta</a>
+        <button type="button" class="mobile-nav-btn" (click)="onMobileOption('conta')">Conta</button>
+        <button type="button" class="mobile-nav-btn" (click)="onMobileOption('agendamentos')">Meus agendamentos</button>
       </nav>
     }
   </header>

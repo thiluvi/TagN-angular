@@ -1,0 +1,118 @@
+@use 'styles/variables' as *;
+
+.profile-widget {
+  position: relative;
+  display: inline-flex;
+}
+
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-38;
+  height: $spacing-38;
+  border-radius: $border-radius-pill;
+  border: $border-width solid $color-border-brand;
+  background: transparent;
+  color: $color-brand-primary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $color-bg-brand;
+    color: $color-text-light;
+  }
+
+  .account-icon {
+    width: $spacing-18;
+    height: $spacing-18;
+  }
+}
+
+.profile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: transparent;
+}
+
+.profile-popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + $spacing-sm);
+  z-index: 200;
+  min-width: 250px;
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $spacing-14;
+  padding: $spacing-sm;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.popover-header {
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  .user-name {
+    font-size: $font-size-caption;
+    color: $color-brand-dark;
+  }
+
+  .user-sub {
+    font-size: $font-size-badge;
+    color: $color-text-muted;
+  }
+}
+
+.popover-divider {
+  height: $border-width;
+  background-color: $color-border-primary;
+  margin: $spacing-xs 0;
+}
+
+.popover-items,
+.popover-footer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.popover-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-10;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  background: transparent;
+  border: none;
+  border-radius: $border-radius-sm;
+  color: $color-text-brand;
+  font-size: $font-size-caption;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: $color-bg-secondary;
+    color: $color-brand-dark;
+  }
+
+  .popover-icon {
+    width: $spacing-18;
+    height: $spacing-18;
+    flex-shrink: 0;
+  }
+
+  &--cta {
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+  }
+
+  &--danger {
+    color: $color-text-secondary;
+  }
+}
