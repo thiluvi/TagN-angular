@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink],
+  imports: [RouterLink, ReactiveFormsModule],
   template: `
     <section class="auth-section">
       <div class="auth-card">
@@ -12,13 +14,48 @@ import { RouterLink } from '@angular/router';
           <p class="auth-subtitle">Informe suas credenciais para visualizar seus agendamentos e histórico.</p>
         </header>
 
-        <div class="auth-placeholder-body">
-          <p class="auth-notice">Formulário de autenticação em desenvolvimento.</p>
+        @if (errorMessage()) {
+          <div class="alert-error" role="alert">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="login-email" class="form-label">E-mail</label>
+            <input
+              id="login-email"
+              type="email"
+              formControlName="email"
+              placeholder="seuemail@exemplo.com"
+              class="form-input"
+              autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" class="form-label">Senha</label>
+            <input
+              id="login-password"
+              type="password"
+              formControlName="password"
+              placeholder="Sua senha"
+              class="form-input"
+              autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="isLoading() || form.invalid">
+            @if (isLoading()) {
+              Entrando...
+            } @else {
+              Entrar
+            }
+          </button>
+
           <div class="auth-footer-links">
             <span class="auth-text">Ainda não tem cadastro?</span>
             <a routerLink="/cadastro" class="auth-link">Crie sua conta</a>
           </div>
-        </div>
+        </form>
       </div>
     </section>
   `,
@@ -55,6 +92,7 @@ import { RouterLink } from '@angular/router';
       font-family: $font-family-serif;
       font-size: $font-size-h2;
       color: $color-text-primary;
+      margin: 0;
     }
 
     .auth-subtitle {
@@ -65,24 +103,84 @@ import { RouterLink } from '@angular/router';
       margin: 0;
     }
 
-    .auth-placeholder-body {
+    .auth-form {
       display: flex;
       flex-direction: column;
-      gap: $spacing-lg;
-      padding-top: $spacing-md;
-      border-top: $border-width solid $color-border-primary;
+      gap: $spacing-md;
     }
 
-    .auth-notice {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+    }
+
+    .form-label {
+      font-family: $font-family-sans;
       font-size: $font-size-caption;
-      color: $color-text-muted;
-      margin: 0;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-caps;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      font-family: $font-family-sans;
+      font-size: $font-size-body-sm;
+      color: $color-text-primary;
+      background-color: $color-bg-secondary;
+      border: $border-width solid $color-border-primary;
+      border-radius: $border-radius-sm;
+      outline: none;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: $color-brand-primary;
+        background-color: $color-bg-primary;
+      }
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: $spacing-md;
+      margin-top: $spacing-xs;
+      background-color: $color-brand-primary;
+      color: $color-text-light;
+      border: none;
+      border-radius: $border-radius-sm;
+      font-family: $font-family-sans;
+      font-size: $font-size-body-sm;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background-color: $color-brand-dark;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .alert-error {
+      padding: $spacing-sm $spacing-md;
+      background-color: rgba(160, 48, 48, 0.08);
+      border: $border-width solid rgba(160, 48, 48, 0.3);
+      border-radius: $border-radius-sm;
+      font-size: $font-size-caption;
+      color: #8c2828;
     }
 
     .auth-footer-links {
       display: flex;
       gap: $spacing-xs;
       font-size: $font-size-caption;
+      justify-content: center;
+      margin-top: $spacing-xs;
     }
 
     .auth-text {
@@ -99,4 +197,40 @@ import { RouterLink } from '@angular/router';
     }
   `,
 })
-export class LoginComponent {}
+export class LoginComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  protected readonly isLoading = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
+
+  protected readonly form = new FormGroup({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
+  });
+
+  protected onSubmit(): void {
+    if (this.form.invalid) return;
+
+    const { email, password } = this.form.getRawValue();
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        void this.router.navigateByUrl('/agendamento');
+      },
+      error: (err: { error?: { detail?: string; message?: string } }) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(err.error?.detail ?? err.error?.message ?? 'Credenciais inválidas.');
+      },
+    });
+  }
+}

@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthModalComponent } from './auth-modal.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -9,7 +11,11 @@ describe('AuthModalComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AuthModalComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService);

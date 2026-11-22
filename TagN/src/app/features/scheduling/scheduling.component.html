@@ -1,0 +1,141 @@
+<section class="scheduling-section">
+  <div class="scheduling-container">
+    <header class="scheduling-header">
+      <h1 class="scheduling-title">Seu cuidado começa aqui.</h1>
+      <p class="scheduling-subtitle">
+        Complete os dados necessários para a consulta. Em seguida, escolha o melhor dia e horário.
+      </p>
+    </header>
+
+    @if (!authService.isAuthenticated()) {
+      <div class="unauth-card">
+        <div class="unauth-icon-circle">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="unauth-content">
+          <h2 class="unauth-title">Acesse sua conta para agendar</h2>
+          <p class="unauth-desc">
+            Para solicitar e acompanhar suas consultas com a Drª. Marcela Medeiros, faça seu login ou cadastre-se em instantes.
+          </p>
+          <div class="unauth-actions">
+            <button type="button" class="btn-primary" (click)="authService.openAuthModal('login', '/agendamento')">
+              Entrar na conta
+            </button>
+            <button type="button" class="btn-secondary" (click)="authService.openAuthModal('register', '/agendamento')">
+              Criar conta
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Formulário de Agendamento -->
+      <div class="scheduling-grid">
+        <div class="card form-card">
+          <h2 class="card-title">Novo Agendamento</h2>
+
+          @if (successMessage()) {
+            <div class="alert-success" role="alert">
+              {{ successMessage() }}
+            </div>
+          }
+
+          @if (errorMessage()) {
+            <div class="alert-error" role="alert">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
+            <div class="form-group">
+              <label for="specialty" class="form-label">Especialidade Desejada</label>
+              <select id="specialty" formControlName="specialty" class="form-select">
+                <option value="ODONTOLOGIA">Odontologia Clínica & Estética</option>
+                <option value="HARMONIZACAO">Harmonização Facial & Orofacial</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date" class="form-label">Data da Consulta</label>
+                <input id="date" type="date" formControlName="date" class="form-input" [min]="minDate">
+              </div>
+
+              <div class="form-group">
+                <label for="time" class="form-label">Horário Preferencial</label>
+                <select id="time" formControlName="time" class="form-select">
+                  <option value="09:00">09:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes" class="form-label">Observações ou queixa principal (opcional)</label>
+              <textarea
+                id="notes"
+                formControlName="notes"
+                rows="3"
+                class="form-textarea"
+                placeholder="Conte brevemente o que você busca na consulta..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" [disabled]="isLoading() || form.invalid">
+              @if (isLoading()) {
+                Solicitando consulta...
+              } @else {
+                Confirmar Solicitação de Agendamento
+              }
+            </button>
+          </form>
+        </div>
+
+        <!-- Meus Agendamentos -->
+        <div class="card appointments-card">
+          <div class="appointments-header">
+            <h2 class="card-title">Minhas Consultas</h2>
+            <button type="button" class="btn-refresh" (click)="loadAppointments()" title="Atualizar agendamentos">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+            </button>
+          </div>
+
+          @if (appointments().length === 0) {
+            <div class="empty-state">
+              <p class="empty-text">Nenhuma consulta agendada até o momento.</p>
+            </div>
+          } @else {
+            <div class="appointment-list">
+              @for (apt of appointments(); track apt.id) {
+                <article class="appointment-item">
+                  <div class="appointment-meta">
+                    <span class="appointment-specialty">
+                      {{ apt.specialty === 'ODONTOLOGIA' ? 'Odontologia' : 'Harmonização' }}
+                    </span>
+                    <span class="appointment-status" [class]="'status--' + apt.status.toLowerCase()">
+                      {{ formatStatus(apt.status) }}
+                    </span>
+                  </div>
+                  <div class="appointment-date">
+                    {{ apt.scheduledAt | date: "dd/MM/yyyy 'às' HH:mm" }}
+                  </div>
+                  @if (apt.notes) {
+                    <p class="appointment-notes">{{ apt.notes }}</p>
+                  }
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

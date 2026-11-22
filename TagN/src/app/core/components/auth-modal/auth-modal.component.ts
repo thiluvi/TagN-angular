@@ -12,6 +12,7 @@ export class AuthModalComponent {
   protected readonly authService = inject(AuthService);
 
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly isLoading = signal(false);
 
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', {
@@ -78,14 +79,21 @@ export class AuthModalComponent {
     }
 
     const { email, password } = this.loginForm.getRawValue();
-    const success = this.authService.login(email, password);
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    if (success) {
-      this.loginForm.reset();
-      this.errorMessage.set(null);
-    } else {
-      this.errorMessage.set('Credenciais inválidas. Tente novamente.');
-    }
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.loginForm.reset();
+        this.errorMessage.set(null);
+      },
+      error: (err: { error?: { detail?: string; message?: string } }) => {
+        this.isLoading.set(false);
+        const msg = err.error?.detail ?? err.error?.message ?? 'Credenciais inválidas. Tente novamente.';
+        this.errorMessage.set(msg);
+      },
+    });
   }
 
   protected onRegisterSubmit(): void {
@@ -101,21 +109,33 @@ export class AuthModalComponent {
       return;
     }
 
-    const success = this.authService.register({
-      name: raw.name,
-      email: raw.email,
-      phone: raw.phone,
-      cpf: raw.cpf,
-      birthDate: raw.birthDate,
-      password: raw.password,
-      confirmPassword: raw.confirmPassword,
-    });
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    if (success) {
-      this.registerForm.reset();
-      this.errorMessage.set(null);
-    } else {
-      this.errorMessage.set('Não foi possível concluir o cadastro. Verifique os dados.');
-    }
+    this.authService
+      .register({
+        name: raw.name,
+        email: raw.email,
+        phone: raw.phone,
+        cpf: raw.cpf,
+        birthDate: raw.birthDate,
+        password: raw.password,
+        confirmPassword: raw.confirmPassword,
+      })
+      .subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.registerForm.reset();
+          this.errorMessage.set(null);
+        },
+        error: (err: { error?: { detail?: string; message?: string } }) => {
+          this.isLoading.set(false);
+          const msg =
+            err.error?.detail ??
+            err.error?.message ??
+            'Não foi possível concluir o cadastro. Verifique os dados informados.';
+          this.errorMessage.set(msg);
+        },
+      });
   }
 }

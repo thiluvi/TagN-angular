@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable, tap } from 'rxjs';
 
 export interface User {
   readonly id: string;
@@ -8,6 +10,7 @@ export interface User {
   readonly phone?: string;
   readonly cpf?: string;
   readonly birthDate?: string;
+  readonly role?: 'PATIENT' | 'ADMIN';
 }
 
 export interface RegisterData {
@@ -20,12 +23,20 @@ export interface RegisterData {
   readonly confirmPassword: string;
 }
 
-const STORAGE_KEY = 'tagn_auth_user';
+export interface AuthResponse {
+  readonly token: string;
+  readonly user: User;
+}
+
+const STORAGE_USER_KEY = 'tagn_auth_user';
+const STORAGE_TOKEN_KEY = 'tagn_token';
+const API_BASE = 'http://localhost:8080/api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
   readonly currentUser = signal<User | null>(this.loadStoredUser());
@@ -50,45 +61,51 @@ export class AuthService {
     this.authModalMode.set(mode);
   }
 
-  login(email: string, _password: string): boolean {
-    if (!email) return false;
-
-    // Simula autenticação com persistência local
-    const namePart = email.split('@')[0] || 'Paciente';
-    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-
-    const user: User = {
-      id: crypto.randomUUID(),
-      name: formattedName,
-      email,
-      phone: '(11) 98765-4321',
-      cpf: '123.456.789-00',
-    };
-
-    this.setCurrentUser(user);
-    this.handlePostAuthSuccess();
-    return true;
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${API_BASE}/auth/login`, { email, password })
+      .pipe(
+        tap((res) => {
+          this.setAuth(res);
+          this.handlePostAuthSuccess();
+        })
+      );
   }
 
-  register(data: RegisterData): boolean {
-    if (!data.name || !data.email || !data.password) return false;
-
-    const user: User = {
-      id: crypto.randomUUID(),
+  register(data: RegisterData): Observable<AuthResponse> {
+    const payload = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       cpf: data.cpf,
       birthDate: data.birthDate,
+      password: data.password,
     };
 
-    this.setCurrentUser(user);
-    this.handlePostAuthSuccess();
-    return true;
+    return this.http
+      .post<AuthResponse>(`${API_BASE}/auth/register`, payload)
+      .pipe(
+        tap((res) => {
+          this.setAuth(res);
+          this.handlePostAuthSuccess();
+        })
+      );
   }
 
   logout(): void {
-    this.setCurrentUser(null);
+    this.setAuth(null);
+    void this.router.navigateByUrl('/');
+  }
+
+  fetchProfile(): Observable<User> {
+    return this.http.get<User>(`${API_BASE}/users/me`).pipe(
+      tap((user) => {
+        this.currentUser.set(user);
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+        }
+      })
+    );
   }
 
   private handlePostAuthSuccess(): void {
@@ -100,13 +117,17 @@ export class AuthService {
     }
   }
 
-  private setCurrentUser(user: User | null): void {
+  private setAuth(auth: AuthResponse | null): void {
+    const user = auth?.user ?? null;
     this.currentUser.set(user);
+
     if (typeof window !== 'undefined' && window.localStorage) {
-      if (user) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+      if (auth) {
+        localStorage.setItem(STORAGE_TOKEN_KEY, auth.token);
+        localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(auth.user));
       } else {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_TOKEN_KEY);
+        localStorage.removeItem(STORAGE_USER_KEY);
       }
     }
   }
@@ -116,7 +137,7 @@ export class AuthService {
       return null;
     }
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_USER_KEY);
       return stored ? (JSON.parse(stored) as User) : null;
     } catch {
       return null;

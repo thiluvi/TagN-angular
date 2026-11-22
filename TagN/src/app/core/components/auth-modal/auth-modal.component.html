@@ -84,8 +84,12 @@
               autocomplete="current-password">
           </div>
 
-          <button type="submit" class="btn-submit">
-            Entrar
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
+            @if (isLoading()) {
+              Entrando...
+            } @else {
+              Entrar
+            }
           </button>
 
           <div class="form-footer">
@@ -181,8 +185,12 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-submit">
-            Criar conta
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
+            @if (isLoading()) {
+              Criando conta...
+            } @else {
+              Criar conta
+            }
           </button>
 
           <div class="form-footer">

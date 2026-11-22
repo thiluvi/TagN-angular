@@ -9,6 +9,7 @@ import com.tagn.backend.exception.NotFoundException;
 import com.tagn.backend.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
 
+    @Transactional
     public AppointmentResponse create(AppointmentRequest request, User user) {
         Appointment appointment = Appointment.builder()
                 .user(user)
@@ -29,6 +31,7 @@ public class AppointmentService {
         return AppointmentResponse.from(appointmentRepository.save(appointment));
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentResponse> listForUser(UUID userId) {
         return appointmentRepository.findByUserId(userId)
                 .stream()
@@ -36,6 +39,7 @@ public class AppointmentService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<AppointmentResponse> listAll() {
         return appointmentRepository.findAll()
                 .stream()
@@ -43,6 +47,7 @@ public class AppointmentService {
                 .toList();
     }
 
+    @Transactional
     public AppointmentResponse updateStatus(UUID id, UpdateStatusRequest request) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado."));
