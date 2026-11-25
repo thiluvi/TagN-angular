@@ -63,7 +63,7 @@ describe('AuthService', () => {
     req.flush(mockResponse);
   });
 
-  it('should register and authenticate user with full fields', () => {
+  it('should register user with full fields without auto-login', () => {
     const mockResponse = {
       token: 'mock-jwt-token-register',
       user: {
@@ -87,9 +87,8 @@ describe('AuthService', () => {
       })
       .subscribe((res) => {
         expect(res.token).toBe('mock-jwt-token-register');
-        expect(service.isAuthenticated()).toBe(true);
-        expect(service.currentUser()?.name).toBe('Maria Silva');
-        expect(service.currentUser()?.email).toBe('maria@exemplo.com');
+        // Register does not auto-login to allow showing success alert and redirecting to login
+        expect(service.isAuthenticated()).toBe(false);
       });
 
     const req = httpMock.expectOne('http://localhost:8080/api/auth/register');
@@ -101,5 +100,31 @@ describe('AuthService', () => {
     service.logout();
     expect(service.isAuthenticated()).toBe(false);
     expect(service.currentUser()).toBeNull();
+  });
+
+  it('should request forgot password code', () => {
+    service.forgotPassword('teste@exemplo.com').subscribe((res) => {
+      expect(res.message).toBe('Código enviado com sucesso');
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/auth/forgot-password');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'teste@exemplo.com' });
+    req.flush({ message: 'Código enviado com sucesso' });
+  });
+
+  it('should reset password with valid code', () => {
+    service.resetPassword('teste@exemplo.com', '123456', 'novasenha123').subscribe((res) => {
+      expect(res.message).toBe('Senha redefinida com sucesso');
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/auth/reset-password');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({
+      email: 'teste@exemplo.com',
+      code: '123456',
+      newPassword: 'novasenha123',
+    });
+    req.flush({ message: 'Senha redefinida com sucesso' });
   });
 });

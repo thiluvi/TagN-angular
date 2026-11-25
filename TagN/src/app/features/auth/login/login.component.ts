@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { CustomValidators } from '../../../core/validators/custom-validators';
 
 @Component({
   selector: 'app-login',
@@ -14,9 +15,17 @@ import { AuthService } from '../../../core/services/auth.service';
           <p class="auth-subtitle">Informe suas credenciais para visualizar seus agendamentos e histórico.</p>
         </header>
 
+        @if (successMessage()) {
+          <div class="alert-success" role="alert">
+            <span class="alert-icon">✓</span>
+            <span>{{ successMessage() }}</span>
+          </div>
+        }
+
         @if (errorMessage()) {
           <div class="alert-error" role="alert">
-            {{ errorMessage() }}
+            <span class="alert-icon">!</span>
+            <span>{{ errorMessage() }}</span>
           </div>
         }
 
@@ -29,7 +38,11 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="email"
               placeholder="seuemail@exemplo.com"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid('email')"
               autocomplete="email">
+            @if (isFieldInvalid('email')) {
+              <span class="field-error">{{ getFieldError('email') }}</span>
+            }
           </div>
 
           <div class="form-group">
@@ -38,12 +51,16 @@ import { AuthService } from '../../../core/services/auth.service';
               id="login-password"
               type="password"
               formControlName="password"
-              placeholder="Sua senha"
+              placeholder="Sua senha (mínimo 6 dígitos)"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid('password')"
               autocomplete="current-password">
+            @if (isFieldInvalid('password')) {
+              <span class="field-error">{{ getFieldError('password') }}</span>
+            }
           </div>
 
-          <button type="submit" class="btn-submit" [disabled]="isLoading() || form.invalid">
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
             @if (isLoading()) {
               Entrando...
             } @else {
@@ -140,6 +157,17 @@ import { AuthService } from '../../../core/services/auth.service';
         border-color: $color-brand-primary;
         background-color: $color-bg-primary;
       }
+
+      &--error {
+        border-color: #c62828 !important;
+        background-color: rgba(160, 48, 48, 0.04);
+      }
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: #c62828;
+      padding-left: 2px;
     }
 
     .btn-submit {
@@ -166,13 +194,51 @@ import { AuthService } from '../../../core/services/auth.service';
       }
     }
 
-    .alert-error {
+    .alert-success, .alert-error {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
       padding: $spacing-sm $spacing-md;
-      background-color: rgba(160, 48, 48, 0.08);
-      border: $border-width solid rgba(160, 48, 48, 0.3);
       border-radius: $border-radius-sm;
       font-size: $font-size-caption;
+      line-height: $line-height-body-sm;
+
+      .alert-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: $border-radius-pill;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+    }
+
+    .alert-success {
+      background-color: rgba(76, 128, 86, 0.12);
+      border: $border-width solid #2e7d32;
+      border-left: 4px solid #2e7d32;
+      color: #1b5e20;
+
+      .alert-icon {
+        background-color: #2e7d32;
+        color: #fff;
+        font-size: 10px;
+      }
+    }
+
+    .alert-error {
+      background-color: rgba(160, 48, 48, 0.08);
+      border: $border-width solid #c62828;
+      border-left: 4px solid #c62828;
       color: #8c2828;
+
+      .alert-icon {
+        background-color: #c62828;
+        color: #fff;
+        font-size: 11px;
+      }
     }
 
     .auth-footer-links {
@@ -197,17 +263,19 @@ import { AuthService } from '../../../core/services/auth.service';
     }
   `,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly successMessage = signal<string | null>(null);
 
   protected readonly form = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, CustomValidators.email],
     }),
     password: new FormControl('', {
       nonNullable: true,
@@ -215,8 +283,40 @@ export class LoginComponent {
     }),
   });
 
+  ngOnInit(): void {
+    const registered = this.route.snapshot.queryParamMap.get('registered');
+    const emailParam = this.route.snapshot.queryParamMap.get('email');
+    if (registered === 'true') {
+      this.successMessage.set('Conta criada com sucesso! Faça seu login para continuar.');
+      if (emailParam) {
+        this.form.patchValue({ email: emailParam });
+      }
+    }
+  }
+
+  protected isFieldInvalid(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  protected getFieldError(fieldName: string): string | null {
+    const control = this.form.get(fieldName);
+    if (!control || !control.errors || !(control.dirty || control.touched)) {
+      return null;
+    }
+
+    if (control.errors['required']) return 'Campo obrigatório';
+    if (control.errors['emailInvalid']) return control.errors['emailInvalid'] as string;
+    if (control.errors['minlength']) return 'Senha deve ter no mínimo 6 dígitos';
+    return 'Valor inválido';
+  }
+
   protected onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.errorMessage.set('Por favor, preencha seu e-mail e senha corretamente.');
+      return;
+    }
 
     const { email, password } = this.form.getRawValue();
     this.isLoading.set(true);

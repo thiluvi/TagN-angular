@@ -4,7 +4,10 @@
     (click)="onBackdropClick($event)"
     role="dialog"
     aria-modal="true"
-    [attr.aria-label]="authService.authModalMode() === 'login' ? 'Modal de Login' : 'Modal de Cadastro'">
+    [attr.aria-label]="
+      authService.authModalMode() === 'login' ? 'Modal de Login' :
+      authService.authModalMode() === 'register' ? 'Modal de Cadastro' : 'Modal de Recuperação de Senha'
+    ">
     
     <div class="modal-card">
       <!-- Botão Fechar -->
@@ -19,43 +22,60 @@
         </svg>
       </button>
 
-      <!-- Alternador de Modos (Tabs) -->
-      <div class="modal-tabs" role="tablist">
-        <button
-          type="button"
-          class="tab-btn"
-          role="tab"
-          [attr.aria-selected]="authService.authModalMode() === 'login'"
-          [class.tab-btn--active]="authService.authModalMode() === 'login'"
-          (click)="switchMode('login')">
-          Entrar
-        </button>
-        <button
-          type="button"
-          class="tab-btn"
-          role="tab"
-          [attr.aria-selected]="authService.authModalMode() === 'register'"
-          [class.tab-btn--active]="authService.authModalMode() === 'register'"
-          (click)="switchMode('register')">
-          Criar conta
-        </button>
-      </div>
+      <!-- Alternador de Modos (Tabs para Login / Criar conta) -->
+      @if (authService.authModalMode() === 'login' || authService.authModalMode() === 'register') {
+        <div class="modal-tabs" role="tablist">
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            [attr.aria-selected]="authService.authModalMode() === 'login'"
+            [class.tab-btn--active]="authService.authModalMode() === 'login'"
+            (click)="switchMode('login')">
+            Entrar
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            [attr.aria-selected]="authService.authModalMode() === 'register'"
+            [class.tab-btn--active]="authService.authModalMode() === 'register'"
+            (click)="switchMode('register')">
+            Criar conta
+          </button>
+        </div>
+      }
 
       <!-- Cabeçalho -->
       <div class="modal-header">
         @if (authService.authModalMode() === 'login') {
           <h2 class="modal-title">Login</h2>
           <p class="modal-subtitle">Seja bem-vindo(a) de volta!</p>
-        } @else {
+        } @else if (authService.authModalMode() === 'register') {
           <h2 class="modal-title">Criar conta</h2>
           <p class="modal-subtitle">Cadastre-se para cuidar de você.</p>
+        } @else if (authService.authModalMode() === 'forgot-password') {
+          <h2 class="modal-title">Recuperar Senha</h2>
+          <p class="modal-subtitle">Enviaremos um código de 6 dígitos para o seu e-mail.</p>
+        } @else if (authService.authModalMode() === 'reset-password') {
+          <h2 class="modal-title">Código de Confirmação</h2>
+          <p class="modal-subtitle">Digite o código de 6 dígitos enviado para <strong>{{ recoveryEmail() }}</strong> e crie uma nova senha.</p>
         }
       </div>
+
+      <!-- Alerta de Sucesso -->
+      @if (successMessage()) {
+        <div class="alert-success" role="alert">
+          <div class="alert-icon">✓</div>
+          <div>{{ successMessage() }}</div>
+        </div>
+      }
 
       <!-- Alerta de Erro -->
       @if (errorMessage()) {
         <div class="alert-error" role="alert">
-          {{ errorMessage() }}
+          <div class="alert-icon">!</div>
+          <div>{{ errorMessage() }}</div>
         </div>
       }
 
@@ -70,7 +90,11 @@
               formControlName="email"
               placeholder="seuemail@exemplo.com"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid(loginForm, 'email')"
               autocomplete="email">
+            @if (isFieldInvalid(loginForm, 'email')) {
+              <span class="field-error">{{ getFieldError(loginForm, 'email') }}</span>
+            }
           </div>
 
           <div class="form-group">
@@ -79,9 +103,13 @@
               id="login-password"
               type="password"
               formControlName="password"
-              placeholder="Sua senha"
+              placeholder="Sua senha (mínimo 6 dígitos)"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid(loginForm, 'password')"
               autocomplete="current-password">
+            @if (isFieldInvalid(loginForm, 'password')) {
+              <span class="field-error">{{ getFieldError(loginForm, 'password') }}</span>
+            }
           </div>
 
           <button type="submit" class="btn-submit" [disabled]="isLoading()">
@@ -97,7 +125,7 @@
               Criar conta
             </button>
             <span class="footer-divider" aria-hidden="true">·</span>
-            <button type="button" class="link-btn" (click)="errorMessage.set('Recuperação de senha enviada para seu e-mail caso cadastrado.')">
+            <button type="button" class="link-btn" (click)="switchMode('forgot-password')">
               Esqueci minha senha
             </button>
           </div>
@@ -115,7 +143,11 @@
               formControlName="name"
               placeholder="Seu nome completo"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid(registerForm, 'name')"
               autocomplete="name">
+            @if (isFieldInvalid(registerForm, 'name')) {
+              <span class="field-error">{{ getFieldError(registerForm, 'name') }}</span>
+            }
           </div>
 
           <div class="form-group">
@@ -126,7 +158,11 @@
               formControlName="email"
               placeholder="seuemail@exemplo.com"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid(registerForm, 'email')"
               autocomplete="email">
+            @if (isFieldInvalid(registerForm, 'email')) {
+              <span class="field-error">{{ getFieldError(registerForm, 'email') }}</span>
+            }
           </div>
 
           <div class="form-row">
@@ -138,7 +174,12 @@
                 formControlName="phone"
                 placeholder="(11) 90000-0000"
                 class="form-input"
+                (input)="onPhoneInput($event)"
+                [class.form-input--error]="isFieldInvalid(registerForm, 'phone')"
                 autocomplete="tel">
+              @if (isFieldInvalid(registerForm, 'phone')) {
+                <span class="field-error">{{ getFieldError(registerForm, 'phone') }}</span>
+              }
             </div>
 
             <div class="form-group">
@@ -148,7 +189,13 @@
                 type="text"
                 formControlName="cpf"
                 placeholder="000.000.000-00"
-                class="form-input">
+                maxlength="14"
+                class="form-input"
+                (input)="onCpfInput($event)"
+                [class.form-input--error]="isFieldInvalid(registerForm, 'cpf')">
+              @if (isFieldInvalid(registerForm, 'cpf')) {
+                <span class="field-error">{{ getFieldError(registerForm, 'cpf') }}</span>
+              }
             </div>
           </div>
 
@@ -158,7 +205,11 @@
               id="reg-birthDate"
               type="date"
               formControlName="birthDate"
-              class="form-input">
+              class="form-input"
+              [class.form-input--error]="isFieldInvalid(registerForm, 'birthDate')">
+            @if (isFieldInvalid(registerForm, 'birthDate')) {
+              <span class="field-error">{{ getFieldError(registerForm, 'birthDate') }}</span>
+            }
           </div>
 
           <div class="form-row">
@@ -170,7 +221,11 @@
                 formControlName="password"
                 placeholder="Mínimo 6 dígitos"
                 class="form-input"
+                [class.form-input--error]="isFieldInvalid(registerForm, 'password')"
                 autocomplete="new-password">
+              @if (isFieldInvalid(registerForm, 'password')) {
+                <span class="field-error">{{ getFieldError(registerForm, 'password') }}</span>
+              }
             </div>
 
             <div class="form-group">
@@ -181,7 +236,11 @@
                 formControlName="confirmPassword"
                 placeholder="Repita sua senha"
                 class="form-input"
+                [class.form-input--error]="isFieldInvalid(registerForm, 'confirmPassword')"
                 autocomplete="new-password">
+              @if (isFieldInvalid(registerForm, 'confirmPassword')) {
+                <span class="field-error">{{ getFieldError(registerForm, 'confirmPassword') }}</span>
+              }
             </div>
           </div>
 
@@ -197,6 +256,110 @@
             <span class="footer-text">Já tem uma conta?</span>
             <button type="button" class="link-btn link-btn--highlight" (click)="switchMode('login')">
               Entrar
+            </button>
+          </div>
+        </form>
+      }
+
+      <!-- Formulário de Esqueci Minha Senha (Etapa 1: Enviar Código) -->
+      @if (authService.authModalMode() === 'forgot-password') {
+        <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="forgot-email" class="form-label">E-mail Cadastrado</label>
+            <input
+              id="forgot-email"
+              type="email"
+              formControlName="email"
+              placeholder="seuemail@exemplo.com"
+              class="form-input"
+              [class.form-input--error]="isFieldInvalid(forgotPasswordForm, 'email')"
+              autocomplete="email">
+            @if (isFieldInvalid(forgotPasswordForm, 'email')) {
+              <span class="field-error">{{ getFieldError(forgotPasswordForm, 'email') }}</span>
+            }
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
+            @if (isLoading()) {
+              Enviando código...
+            } @else {
+              Enviar Código de Recuperação
+            }
+          </button>
+
+          <div class="form-footer">
+            <button type="button" class="link-btn" (click)="switchMode('login')">
+              ← Voltar ao Login
+            </button>
+          </div>
+        </form>
+      }
+
+      <!-- Formulário de Redefinir Senha (Etapa 2: Código + Nova Senha) -->
+      @if (authService.authModalMode() === 'reset-password') {
+        <form [formGroup]="resetPasswordForm" (ngSubmit)="onResetPasswordSubmit()" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="reset-code" class="form-label">Código de 6 dígitos</label>
+            <input
+              id="reset-code"
+              type="text"
+              formControlName="code"
+              placeholder="000000"
+              maxlength="6"
+              class="form-input form-input--code"
+              (input)="onCodeInput($event)"
+              [class.form-input--error]="isFieldInvalid(resetPasswordForm, 'code')"
+              autocomplete="one-time-code">
+            @if (isFieldInvalid(resetPasswordForm, 'code')) {
+              <span class="field-error">{{ getFieldError(resetPasswordForm, 'code') }}</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="reset-password" class="form-label">Nova Senha</label>
+            <input
+              id="reset-password"
+              type="password"
+              formControlName="newPassword"
+              placeholder="Mínimo 6 dígitos"
+              class="form-input"
+              [class.form-input--error]="isFieldInvalid(resetPasswordForm, 'newPassword')"
+              autocomplete="new-password">
+            @if (isFieldInvalid(resetPasswordForm, 'newPassword')) {
+              <span class="field-error">{{ getFieldError(resetPasswordForm, 'newPassword') }}</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="reset-confirmPassword" class="form-label">Confirme a Nova Senha</label>
+            <input
+              id="reset-confirmPassword"
+              type="password"
+              formControlName="confirmNewPassword"
+              placeholder="Repita sua nova senha"
+              class="form-input"
+              [class.form-input--error]="isFieldInvalid(resetPasswordForm, 'confirmNewPassword')"
+              autocomplete="new-password">
+            @if (isFieldInvalid(resetPasswordForm, 'confirmNewPassword')) {
+              <span class="field-error">{{ getFieldError(resetPasswordForm, 'confirmNewPassword') }}</span>
+            }
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
+            @if (isLoading()) {
+              Salvando nova senha...
+            } @else {
+              Redefinir e Salvar Senha
+            }
+          </button>
+
+          <div class="form-footer">
+            <button type="button" class="link-btn" (click)="onForgotPasswordSubmit()">
+              Reenviar código
+            </button>
+            <span class="footer-divider" aria-hidden="true">·</span>
+            <button type="button" class="link-btn" (click)="switchMode('login')">
+              Voltar ao Login
             </button>
           </div>
         </form>

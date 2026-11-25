@@ -10,5 +10,5 @@ public record RegisterRequest(
         @NotBlank String phone,
         @NotBlank String cpf,
         @NotNull LocalDate birthDate,
-        @NotBlank @Size(min = 8) String password
+        @NotBlank @Size(min = 6) String password
 ) {}

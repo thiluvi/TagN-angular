@@ -43,10 +43,13 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this.currentUser());
 
   readonly isAuthModalOpen = signal(false);
-  readonly authModalMode = signal<'login' | 'register'>('login');
+  readonly authModalMode = signal<'login' | 'register' | 'forgot-password' | 'reset-password'>('login');
   readonly pendingDestination = signal<string | null>(null);
 
-  openAuthModal(mode: 'login' | 'register' = 'login', destination?: string): void {
+  openAuthModal(
+    mode: 'login' | 'register' | 'forgot-password' | 'reset-password' = 'login',
+    destination?: string
+  ): void {
     this.authModalMode.set(mode);
     this.pendingDestination.set(destination ?? null);
     this.isAuthModalOpen.set(true);
@@ -57,7 +60,7 @@ export class AuthService {
     this.pendingDestination.set(null);
   }
 
-  setModalMode(mode: 'login' | 'register'): void {
+  setModalMode(mode: 'login' | 'register' | 'forgot-password' | 'reset-password'): void {
     this.authModalMode.set(mode);
   }
 
@@ -82,14 +85,19 @@ export class AuthService {
       password: data.password,
     };
 
-    return this.http
-      .post<AuthResponse>(`${API_BASE}/auth/register`, payload)
-      .pipe(
-        tap((res) => {
-          this.setAuth(res);
-          this.handlePostAuthSuccess();
-        })
-      );
+    return this.http.post<AuthResponse>(`${API_BASE}/auth/register`, payload);
+  }
+
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API_BASE}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(email: string, code: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API_BASE}/auth/reset-password`, {
+      email,
+      code,
+      newPassword,
+    });
   }
 
   logout(): void {

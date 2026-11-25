@@ -1,0 +1,31 @@
+# Environment variables
+**/.env
+.env
+.env.*
+!.env.example
+
+# Dependencies
+**/node_modules/
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs and Editors
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# Build outputs
+TagN/dist/
+TagN/.angular/
+TagN/tmp/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log

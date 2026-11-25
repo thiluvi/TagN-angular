@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { CustomValidators } from '../../../core/validators/custom-validators';
 
 @Component({
   selector: 'app-register',
@@ -14,9 +15,17 @@ import { AuthService } from '../../../core/services/auth.service';
           <p class="auth-subtitle">Cadastre-se para gerenciar suas consultas e receber orientações personalizadas.</p>
         </header>
 
+        @if (successMessage()) {
+          <div class="alert-success" role="alert">
+            <span class="alert-icon">✓</span>
+            <span>{{ successMessage() }}</span>
+          </div>
+        }
+
         @if (errorMessage()) {
           <div class="alert-error" role="alert">
-            {{ errorMessage() }}
+            <span class="alert-icon">!</span>
+            <span>{{ errorMessage() }}</span>
           </div>
         }
 
@@ -29,7 +38,11 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="name"
               placeholder="Seu nome completo"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid('name')"
               autocomplete="name">
+            @if (isFieldInvalid('name')) {
+              <span class="field-error">{{ getFieldError('name') }}</span>
+            }
           </div>
 
           <div class="form-group">
@@ -40,7 +53,11 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="email"
               placeholder="seuemail@exemplo.com"
               class="form-input"
+              [class.form-input--error]="isFieldInvalid('email')"
               autocomplete="email">
+            @if (isFieldInvalid('email')) {
+              <span class="field-error">{{ getFieldError('email') }}</span>
+            }
           </div>
 
           <div class="form-row">
@@ -52,7 +69,12 @@ import { AuthService } from '../../../core/services/auth.service';
                 formControlName="phone"
                 placeholder="(11) 90000-0000"
                 class="form-input"
+                (input)="onPhoneInput($event)"
+                [class.form-input--error]="isFieldInvalid('phone')"
                 autocomplete="tel">
+              @if (isFieldInvalid('phone')) {
+                <span class="field-error">{{ getFieldError('phone') }}</span>
+              }
             </div>
 
             <div class="form-group">
@@ -62,7 +84,13 @@ import { AuthService } from '../../../core/services/auth.service';
                 type="text"
                 formControlName="cpf"
                 placeholder="000.000.000-00"
-                class="form-input">
+                maxlength="14"
+                class="form-input"
+                (input)="onCpfInput($event)"
+                [class.form-input--error]="isFieldInvalid('cpf')">
+              @if (isFieldInvalid('cpf')) {
+                <span class="field-error">{{ getFieldError('cpf') }}</span>
+              }
             </div>
           </div>
 
@@ -72,7 +100,11 @@ import { AuthService } from '../../../core/services/auth.service';
               id="reg-birthDate"
               type="date"
               formControlName="birthDate"
-              class="form-input">
+              class="form-input"
+              [class.form-input--error]="isFieldInvalid('birthDate')">
+            @if (isFieldInvalid('birthDate')) {
+              <span class="field-error">{{ getFieldError('birthDate') }}</span>
+            }
           </div>
 
           <div class="form-row">
@@ -84,7 +116,11 @@ import { AuthService } from '../../../core/services/auth.service';
                 formControlName="password"
                 placeholder="Mínimo 6 dígitos"
                 class="form-input"
+                [class.form-input--error]="isFieldInvalid('password')"
                 autocomplete="new-password">
+              @if (isFieldInvalid('password')) {
+                <span class="field-error">{{ getFieldError('password') }}</span>
+              }
             </div>
 
             <div class="form-group">
@@ -95,11 +131,15 @@ import { AuthService } from '../../../core/services/auth.service';
                 formControlName="confirmPassword"
                 placeholder="Repita sua senha"
                 class="form-input"
+                [class.form-input--error]="isFieldInvalid('confirmPassword')"
                 autocomplete="new-password">
+              @if (isFieldInvalid('confirmPassword')) {
+                <span class="field-error">{{ getFieldError('confirmPassword') }}</span>
+              }
             </div>
           </div>
 
-          <button type="submit" class="btn-submit" [disabled]="isLoading() || form.invalid">
+          <button type="submit" class="btn-submit" [disabled]="isLoading()">
             @if (isLoading()) {
               Cadastrando...
             } @else {
@@ -206,6 +246,17 @@ import { AuthService } from '../../../core/services/auth.service';
         border-color: $color-brand-primary;
         background-color: $color-bg-primary;
       }
+
+      &--error {
+        border-color: #c62828 !important;
+        background-color: rgba(160, 48, 48, 0.04);
+      }
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: #c62828;
+      padding-left: 2px;
     }
 
     .btn-submit {
@@ -232,13 +283,51 @@ import { AuthService } from '../../../core/services/auth.service';
       }
     }
 
-    .alert-error {
+    .alert-success, .alert-error {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
       padding: $spacing-sm $spacing-md;
-      background-color: rgba(160, 48, 48, 0.08);
-      border: $border-width solid rgba(160, 48, 48, 0.3);
       border-radius: $border-radius-sm;
       font-size: $font-size-caption;
+      line-height: $line-height-body-sm;
+
+      .alert-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: $border-radius-pill;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+    }
+
+    .alert-success {
+      background-color: rgba(76, 128, 86, 0.12);
+      border: $border-width solid #2e7d32;
+      border-left: 4px solid #2e7d32;
+      color: #1b5e20;
+
+      .alert-icon {
+        background-color: #2e7d32;
+        color: #fff;
+        font-size: 10px;
+      }
+    }
+
+    .alert-error {
+      background-color: rgba(160, 48, 48, 0.08);
+      border: $border-width solid #c62828;
+      border-left: 4px solid #c62828;
       color: #8c2828;
+
+      .alert-icon {
+        background-color: #c62828;
+        color: #fff;
+        font-size: 11px;
+      }
     }
 
     .auth-footer-links {
@@ -269,6 +358,7 @@ export class RegisterComponent {
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly successMessage = signal<string | null>(null);
 
   protected readonly form = new FormGroup({
     name: new FormControl('', {
@@ -277,19 +367,19 @@ export class RegisterComponent {
     }),
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, CustomValidators.email],
     }),
     phone: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, CustomValidators.phone],
     }),
     cpf: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, CustomValidators.cpf],
     }),
     birthDate: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, CustomValidators.birthDate],
     }),
     password: new FormControl('', {
       nonNullable: true,
@@ -297,29 +387,67 @@ export class RegisterComponent {
     }),
     confirmPassword: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, CustomValidators.matchValues('password')],
     }),
   });
 
+  constructor() {
+    this.form.controls.password.valueChanges.subscribe(() => {
+      this.form.controls.confirmPassword.updateValueAndValidity();
+    });
+  }
+
+  protected onCpfInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const formatted = CustomValidators.formatCpf(input.value);
+    this.form.controls.cpf.setValue(formatted, { emitEvent: false });
+  }
+
+  protected onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const formatted = CustomValidators.formatPhone(input.value);
+    this.form.controls.phone.setValue(formatted, { emitEvent: false });
+  }
+
+  protected isFieldInvalid(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  protected getFieldError(fieldName: string): string | null {
+    const control = this.form.get(fieldName);
+    if (!control || !control.errors || !(control.dirty || control.touched)) {
+      return null;
+    }
+
+    if (control.errors['required']) return 'Campo obrigatório';
+    if (control.errors['emailInvalid']) return control.errors['emailInvalid'] as string;
+    if (control.errors['cpfInvalid']) return control.errors['cpfInvalid'] as string;
+    if (control.errors['phoneInvalid']) return control.errors['phoneInvalid'] as string;
+    if (control.errors['birthDateInvalid']) return control.errors['birthDateInvalid'] as string;
+    if (control.errors['minlength']) return 'Mínimo de 6 dígitos';
+    if (control.errors['mismatch']) return 'As senhas não coincidem';
+    return 'Valor inválido';
+  }
+
   protected onSubmit(): void {
-    if (this.form.invalid) return;
-
-    const raw = this.form.getRawValue();
-
-    if (raw.password !== raw.confirmPassword) {
-      this.errorMessage.set('A senha e a confirmação de senha não coincidem.');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.errorMessage.set('Por favor, verifique os campos destacados em vermelho.');
       return;
     }
+
+    const raw = this.form.getRawValue();
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     this.authService
       .register({
-        name: raw.name,
-        email: raw.email,
-        phone: raw.phone,
-        cpf: raw.cpf,
+        name: raw.name.trim(),
+        email: raw.email.trim(),
+        phone: raw.phone.trim(),
+        cpf: raw.cpf.trim(),
         birthDate: raw.birthDate,
         password: raw.password,
         confirmPassword: raw.confirmPassword,
@@ -327,7 +455,14 @@ export class RegisterComponent {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          void this.router.navigateByUrl('/agendamento');
+          const email = raw.email.trim();
+          this.form.reset();
+          this.errorMessage.set(null);
+          this.successMessage.set('Conta criada com sucesso! Redirecionando para o login...');
+
+          setTimeout(() => {
+            void this.router.navigate(['/login'], { queryParams: { registered: 'true', email } });
+          }, 1500);
         },
         error: (err: { error?: { detail?: string; message?: string } }) => {
           this.isLoading.set(false);

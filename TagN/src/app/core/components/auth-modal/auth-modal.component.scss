@@ -17,7 +17,7 @@
 .modal-card {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
   background-color: $color-bg-primary;
@@ -106,16 +106,60 @@
     font-size: $font-size-body-sm;
     color: $color-text-secondary;
     margin: 0;
+    line-height: $line-height-body-sm;
+
+    strong {
+      color: $color-brand-dark;
+    }
+  }
+}
+
+.alert-success, .alert-error {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-10 $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-caption;
+  line-height: $line-height-body-sm;
+  animation: fadeIn 0.2s ease-out;
+
+  .alert-icon {
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: $border-radius-pill;
+    flex-shrink: 0;
+  }
+}
+
+.alert-success {
+  background-color: rgba(76, 128, 86, 0.12);
+  border: $border-width solid #2e7d32;
+  border-left: 4px solid #2e7d32;
+  color: #1b5e20;
+
+  .alert-icon {
+    background-color: #2e7d32;
+    color: #fff;
+    font-size: 11px;
   }
 }
 
 .alert-error {
-  padding: $spacing-10 $spacing-md;
-  background-color: $color-bg-secondary;
-  border-left: 3px solid $color-brand-primary;
-  color: $color-brand-dark;
-  font-size: $font-size-caption;
-  border-radius: $border-radius-sm;
+  background-color: rgba(160, 48, 48, 0.08);
+  border: $border-width solid #c62828;
+  border-left: 4px solid #c62828;
+  color: #8c2828;
+
+  .alert-icon {
+    background-color: #c62828;
+    color: #fff;
+    font-size: 12px;
+  }
 }
 
 .auth-form {
@@ -156,6 +200,7 @@
     color: $color-text-primary;
     font-size: $font-size-body-sm;
     outline: none;
+    box-sizing: border-box;
     transition: border-color 0.2s ease, background-color 0.2s ease;
 
     &:focus {
@@ -166,6 +211,30 @@
     &::placeholder {
       color: $color-text-muted;
     }
+
+    &--code {
+      font-size: 20px;
+      letter-spacing: 6px;
+      text-align: center;
+      font-weight: 600;
+      color: $color-brand-dark;
+    }
+
+    &--error {
+      border-color: #c62828 !important;
+      background-color: rgba(160, 48, 48, 0.04);
+
+      &:focus {
+        border-color: #c62828;
+      }
+    }
+  }
+
+  .field-error {
+    font-size: 11px;
+    color: #c62828;
+    margin-top: 2px;
+    padding-left: $spacing-xs;
   }
 }
 
@@ -185,9 +254,14 @@
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     opacity: 0.92;
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
