@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -39,6 +40,9 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        if (request.birthDate().isAfter(LocalDate.now().minusYears(18))) {
+            throw new IllegalArgumentException("É necessário ter pelo menos 18 anos para se cadastrar.");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new ConflictException("E-mail já cadastrado.");
         }

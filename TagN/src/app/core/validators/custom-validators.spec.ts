@@ -65,9 +65,29 @@ describe('CustomValidators', () => {
   });
 
   describe('BirthDate Validator', () => {
-    it('should accept a valid past birth date', () => {
+    it('should accept a valid past birth date (18+)', () => {
       const control = new FormControl('1990-05-15');
       expect(CustomValidators.birthDate(control)).toBeNull();
+    });
+
+    it('should accept a birth date of someone turning 18 today', () => {
+      const now = new Date();
+      const yyyy = now.getFullYear() - 18;
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const control = new FormControl(`${yyyy}-${mm}-${dd}`);
+      expect(CustomValidators.birthDate(control)).toBeNull();
+    });
+
+    it('should reject a birth date of someone under 18', () => {
+      const now = new Date();
+      const yyyy = now.getFullYear() - 17;
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const control = new FormControl(`${yyyy}-${mm}-${dd}`);
+      expect(CustomValidators.birthDate(control)).toEqual({
+        birthDateInvalid: 'É necessário ter pelo menos 18 anos para se cadastrar',
+      });
     });
 
     it('should reject a future birth date', () => {

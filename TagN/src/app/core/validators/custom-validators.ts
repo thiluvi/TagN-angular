@@ -81,27 +81,50 @@ export class CustomValidators {
   }
 
   /**
-   * Valida se a data de nascimento não está no futuro e é válida.
+   * Valida se a data de nascimento é válida, não está no futuro e o usuário tem pelo menos 18 anos.
    */
   static birthDate(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
 
-    const selectedDate = new Date(value);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    const strValue = String(value).trim();
+    let selectedDate: Date;
 
-    if (isNaN(selectedDate.getTime())) {
-      return { birthDateInvalid: 'Data de nascimento inválida' };
+    const isoMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(strValue);
+    if (isoMatch) {
+      const year = Number(isoMatch[1]);
+      const month = Number(isoMatch[2]);
+      const day = Number(isoMatch[3]);
+      selectedDate = new Date(year, month - 1, day);
+      if (
+        selectedDate.getFullYear() !== year ||
+        selectedDate.getMonth() !== month - 1 ||
+        selectedDate.getDate() !== day
+      ) {
+        return { birthDateInvalid: 'Data de nascimento inválida' };
+      }
+    } else {
+      selectedDate = new Date(strValue);
+      if (isNaN(selectedDate.getTime())) {
+        return { birthDateInvalid: 'Data de nascimento inválida' };
+      }
     }
 
-    if (selectedDate > today) {
+    const now = new Date();
+    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    if (selectedDate > todayEnd) {
       return { birthDateInvalid: 'Data de nascimento não pode ser futura' };
     }
 
     const minDate = new Date(1900, 0, 1);
     if (selectedDate < minDate) {
       return { birthDateInvalid: 'Data de nascimento fora do intervalo válido' };
+    }
+
+    const maxAdultDate = new Date(now.getFullYear() - 18, now.getMonth(), now.getDate());
+    if (selectedDate > maxAdultDate) {
+      return { birthDateInvalid: 'É necessário ter pelo menos 18 anos para se cadastrar' };
     }
 
     return null;
