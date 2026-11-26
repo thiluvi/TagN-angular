@@ -16,7 +16,9 @@ export class HeroSectionComponent {
 
   handleScheduleClick(): void {
     if (this.authService.isAuthenticated()) {
-      void this.router.navigate(['/agendamento']);
+      void this.router.navigate([
+        this.authService.isAdmin() ? '/agendamentos' : '/agendamento',
+      ]);
     } else {
       this.authService.openAuthModal('login', '/agendamento');
     }

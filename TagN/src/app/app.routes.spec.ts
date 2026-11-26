@@ -142,4 +142,44 @@ describe('App Routing & Schedule Button', () => {
     expect(docRouter.url).toBe('/agendamentos');
     expect(docFixture.nativeElement.querySelector('app-doctor-appointments')).toBeTruthy();
   });
+
+  it('should redirect ADMIN to /agendamentos when clicking "Agendar consulta"', async () => {
+    localStorage.setItem(
+      'tagn_auth_user',
+      JSON.stringify({ id: '3', name: 'Admin', email: 'dramarcela@gmail.com', role: 'ADMIN' })
+    );
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigate(['/']);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const heroBtn = fixture.nativeElement.querySelector('app-hero-section .btn-primary') as HTMLButtonElement;
+    expect(heroBtn).toBeTruthy();
+    heroBtn.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(router.url).toBe('/agendamentos');
+    expect(fixture.nativeElement.querySelector('app-doctor-appointments')).toBeTruthy();
+  });
+
+  it('should navigate to /termos-de-uso and /politicas-de-privacidade', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigate(['/termos-de-uso']);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(router.url).toBe('/termos-de-uso');
+    expect(fixture.nativeElement.querySelector('app-terms')).toBeTruthy();
+
+    await router.navigate(['/politicas-de-privacidade']);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(router.url).toBe('/politicas-de-privacidade');
+    expect(fixture.nativeElement.querySelector('app-privacy')).toBeTruthy();
+  });
 });

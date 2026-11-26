@@ -3,7 +3,7 @@
     <div class="header-container">
       <!-- Logo / Marca institucional -->
       <a routerLink="/" class="brand" (click)="closeMobileMenu()" aria-label="Ir para a página inicial">
-        <span class="brand-name">Drª. Marcela Medeiros</span>
+        <span class="brand-name">Integra Clínica</span>
         <span class="brand-tagline">ODONTOLOGIA &amp; HARMONIZAÇÃO</span>
       </a>
 
@@ -72,7 +72,7 @@
         <!-- Coluna 1: Marca e Slogan -->
         <div class="footer-col footer-col--brand">
           <div class="brand">
-            <span class="brand-name">Drª. Marcela Medeiros</span>
+            <span class="brand-name">Integra Clínica</span>
             <span class="brand-tagline">ODONTOLOGIA &amp; HARMONIZAÇÃO</span>
           </div>
           <p class="footer-slogan">Seu sorriso. Sua essência. Em harmonia.</p>
@@ -86,7 +86,17 @@
             <li><a routerLink="/" fragment="atuacao" class="footer-link">Áreas de atuação</a></li>
             <li><a routerLink="/" fragment="trabalhos" class="footer-link">Trabalhos</a></li>
             <li><a routerLink="/" fragment="duvidas" class="footer-link">Dúvidas frequentes</a></li>
-            <li><button class="footer-link footer-link--highlight" (click)="onScheduleClick()">Agendar consulta</button></li>
+            <li><button type="button" class="footer-link" (click)="onScheduleClick()">Agendar consulta</button></li>
+            <li>
+              <a
+                href="https://wa.me/5511945541952?text=Ol%C3%A1%2C%20gostaria%20de%20entrar%20em%20contato%20com%20a%20Integra%20Cl%C3%ADnica."
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-link"
+              >Entre em contato</a>
+            </li>
+            <li><a routerLink="/termos-de-uso" class="footer-link">Termos de uso</a></li>
+            <li><a routerLink="/politicas-de-privacidade" class="footer-link">Políticas de privacidade</a></li>
           </ul>
         </div>
 
@@ -109,7 +119,7 @@
       <div class="footer-divider" role="separator"></div>
 
       <div class="footer-bottom">
-        <p class="copyright">© Drª. Marcela Medeiros · Todos os direitos reservados.</p>
+        <p class="copyright">© TagN S. A. · Todos os direitos reservados.</p>
       </div>
     </div>
   </footer>

@@ -26,7 +26,9 @@ export class PublicLayoutComponent {
   protected onScheduleClick(): void {
     this.closeMobileMenu();
     if (this.authService.isAuthenticated()) {
-      void this.router.navigate(['/agendamento']);
+      void this.router.navigate([
+        this.authService.isAdmin() ? '/agendamentos' : '/agendamento',
+      ]);
     } else {
       this.authService.openAuthModal('login', '/agendamento');
     }

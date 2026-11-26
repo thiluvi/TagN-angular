@@ -141,7 +141,9 @@ export class AuthService {
     this.closeAuthModal();
 
     if (destination) {
-      void this.router.navigateByUrl(destination);
+      const target =
+        destination === '/agendamento' && this.isAdmin() ? '/agendamentos' : destination;
+      void this.router.navigateByUrl(target);
     }
   }
 

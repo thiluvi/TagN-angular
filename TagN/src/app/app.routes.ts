@@ -73,7 +73,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/account/account.component').then((m) => m.AccountComponent),
         data: { headerTitle: 'MINHA CONTA' },
-        title: 'Minha Conta — Drª. Marcela Medeiros',
+        title: 'Minha Conta — Integra Clínica',
+      },
+      {
+        path: 'termos-de-uso',
+        loadComponent: () =>
+          import('./features/legal/terms.component').then((m) => m.TermsComponent),
+        data: { headerTitle: 'TERMOS DE USO' },
+        title: 'Termos de Uso — Integra Clínica',
+      },
+      {
+        path: 'politicas-de-privacidade',
+        loadComponent: () =>
+          import('./features/legal/privacy.component').then((m) => m.PrivacyComponent),
+        data: { headerTitle: 'POLÍTICA DE PRIVACIDADE' },
+        title: 'Políticas de Privacidade — Integra Clínica',
       },
     ],
   },
