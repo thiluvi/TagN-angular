@@ -7,10 +7,12 @@ import com.tagn.backend.dto.response.AppointmentResponse;
 import com.tagn.backend.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,16 +37,24 @@ public class AppointmentController {
         return appointmentService.listForUser(user.getId());
     }
 
+    @GetMapping("/occupied")
+    public List<String> occupiedSlots(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return appointmentService.getOccupiedSlots(date);
+    }
+
     @GetMapping
-    public List<AppointmentResponse> allAppointments() {
-        return appointmentService.listAll();
+    public List<AppointmentResponse> allAppointments(@AuthenticationPrincipal User user) {
+        return appointmentService.listAll(user);
     }
 
     @PutMapping("/{id}/status")
     public AppointmentResponse updateStatus(
             @PathVariable UUID id,
-            @Valid @RequestBody UpdateStatusRequest request
+            @Valid @RequestBody UpdateStatusRequest request,
+            @AuthenticationPrincipal User user
     ) {
-        return appointmentService.updateStatus(id, request);
+        return appointmentService.updateStatus(id, request, user);
     }
 }

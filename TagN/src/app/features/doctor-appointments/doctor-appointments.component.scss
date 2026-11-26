@@ -1,0 +1,672 @@
+@use 'styles/variables' as *;
+
+.doc-apts-page {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $spacing-40 $section-padding-x $spacing-3xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  @media (max-width: 1100px) {
+    padding: $spacing-xl $spacing-lg $spacing-2xl;
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-lg $spacing-md $spacing-xl;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Header
+// ─────────────────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-display-3;
+  color: $color-brand-dark;
+  line-height: $line-height-title;
+  margin: 0 0 $spacing-xs;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-h2;
+  }
+}
+
+.page-subtitle {
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.total-badge {
+  font-size: $font-size-caption;
+  color: $color-text-muted;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Filter Card
+// ─────────────────────────────────────────────────────────────────────────────
+.filter-card {
+  background-color: $color-bg-secondary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  padding: $spacing-20 $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .filter-title {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: $font-size-caption;
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+  }
+
+  .btn-clear {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: $font-size-caption;
+    color: $color-text-muted;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-brand-dark;
+    }
+  }
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 11px;
+  color: $color-text-secondary;
+}
+
+.input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input-icon {
+    position: absolute;
+    right: 12px;
+    color: $color-text-muted;
+    pointer-events: none;
+  }
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 $spacing-md;
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-body-sm;
+  color: $color-text-primary;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $color-brand-primary;
+  }
+}
+
+.filter-input {
+  padding-right: 36px;
+
+  &--date {
+    padding-right: $spacing-md;
+  }
+}
+
+.date-range-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: $spacing-md;
+  padding-top: $spacing-xs;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// KPI Cards
+// ─────────────────────────────────────────────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpi-card {
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  padding: $spacing-20 $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+
+  .kpi-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .kpi-number {
+    font-family: $font-family-serif;
+    font-size: 2.25rem;
+    line-height: 1;
+    color: $color-brand-dark;
+  }
+
+  .kpi-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+      font-size: $font-size-body-sm;
+      font-weight: $font-weight-medium;
+      color: $color-brand-dark;
+    }
+
+    span {
+      font-size: 11px;
+      color: $color-text-muted;
+    }
+  }
+
+  .kpi-icon {
+    color: $color-text-muted;
+    flex-shrink: 0;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tables
+// ─────────────────────────────────────────────────────────────────────────────
+.table-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.section-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+}
+
+.section-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-h3;
+  color: $color-brand-dark;
+  margin: 0;
+}
+
+.section-count {
+  font-size: $font-size-caption;
+  color: $color-text-muted;
+}
+
+.section-meta {
+  font-size: 11px;
+  color: $color-text-muted;
+}
+
+.table-card {
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.apts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: $font-size-body-sm;
+
+  th {
+    background-color: $color-bg-secondary;
+    padding: $spacing-14 $spacing-md;
+    font-size: 11px;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+    border-bottom: $border-width solid $color-border-primary;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: $spacing-md;
+    border-bottom: $border-width solid $color-border-primary;
+    color: $color-text-primary;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .col-actions {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+.cell-primary {
+  font-weight: $font-weight-medium;
+  color: $color-brand-dark;
+}
+
+.cell-sub {
+  font-size: 11px;
+  color: $color-text-muted;
+  margin-top: 2px;
+}
+
+.cell-time {
+  font-weight: $font-weight-medium;
+  color: $color-brand-dark;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Status Pills & Action Buttons (Verde/Vermelho compatíveis com a paleta)
+// ─────────────────────────────────────────────────────────────────────────────
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: $border-radius-sm;
+  font-size: 11px;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  &--confirmed {
+    background-color: $color-bg-accent-blush;
+    color: $color-brand-dark;
+  }
+
+  &--pending {
+    background-color: $color-bg-secondary;
+    color: $color-text-secondary;
+  }
+
+  &--done {
+    background-color: $color-bg-secondary;
+    color: $color-brand-dark;
+  }
+
+  &--cancelled {
+    background-color: rgba(140, 59, 59, 0.12);
+    color: #8c3b3b;
+  }
+}
+
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-caption;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+
+  &--confirm {
+    background-color: #ebf2ec;
+    border: 1px solid #b5cab8;
+    color: #35593d;
+
+    &:hover:not(:disabled) {
+      background-color: #dce8de;
+      border-color: #35593d;
+    }
+  }
+
+  &--cancel {
+    background-color: #f8eceb;
+    border: 1px solid #dfc0bd;
+    color: #8c3b3b;
+
+    &:hover:not(:disabled) {
+      background-color: #f2dedc;
+      border-color: #8c3b3b;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-details {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: $font-size-caption;
+  font-weight: $font-weight-medium;
+  color: $color-brand-dark;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-brand-primary;
+  }
+}
+
+.table-footer {
+  padding: $spacing-14 $spacing-md;
+  background-color: $color-bg-primary;
+  border-top: $border-width solid $color-border-primary;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: $color-text-muted;
+}
+
+.pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  .page-btn {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 11px;
+    color: $color-brand-dark;
+    cursor: pointer;
+
+    &:disabled {
+      color: $color-text-muted;
+      cursor: default;
+    }
+  }
+
+  .page-current {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-brand-primary;
+    color: $color-text-light;
+    border-radius: $border-radius-sm;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Loading / Empty / Alert
+// ─────────────────────────────────────────────────────────────────────────────
+.loading-box,
+.empty-card {
+  padding: $spacing-32;
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-body-sm;
+  color: $color-text-muted;
+  text-align: center;
+}
+
+.alert--error {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-caption;
+  background-color: rgba(140, 59, 59, 0.08);
+  border: $border-width solid rgba(140, 59, 59, 0.3);
+  color: #8c3b3b;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Modais (Confirmação, Nota e Detalhes)
+// ─────────────────────────────────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  padding: $spacing-28;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.modal-eyebrow {
+  font-size: $font-size-badge;
+  letter-spacing: $letter-spacing-caps;
+  color: $color-text-muted;
+}
+
+.modal-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-h3;
+  color: $color-brand-dark;
+  margin: 0;
+  line-height: $line-height-heading;
+}
+
+.modal-desc {
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-body-sm;
+  margin: 0;
+}
+
+.note-textarea {
+  width: 100%;
+  padding: $spacing-md;
+  background-color: $color-bg-secondary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-body-sm;
+  color: $color-text-primary;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $color-brand-primary;
+    background-color: $color-bg-primary;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: $spacing-sm;
+  padding-top: $spacing-xs;
+}
+
+.btn-primary {
+  padding: $spacing-10 $spacing-md;
+  background-color: $color-brand-primary;
+  color: $color-text-light;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-button;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: $color-brand-dark;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-outline {
+  padding: $spacing-10 $spacing-md;
+  background-color: $color-bg-primary;
+  color: $color-brand-dark;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-button;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg-secondary;
+  }
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-md;
+
+  .detail-close {
+    background: none;
+    border: $border-width solid $color-border-primary;
+    border-radius: $border-radius-pill;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-secondary;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-bg-secondary;
+      color: $color-brand-dark;
+    }
+  }
+}
+
+.detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md 0;
+  border-top: $border-width solid $color-border-primary;
+  border-bottom: $border-width solid $color-border-primary;
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-md;
+    font-size: $font-size-body-sm;
+
+    &--column {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  .detail-label {
+    color: $color-text-muted;
+  }
+
+  .detail-value {
+    color: $color-brand-dark;
+    text-align: right;
+  }
+
+  .detail-notes {
+    margin: 0;
+    padding: $spacing-sm $spacing-md;
+    background-color: $color-bg-secondary;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-caption;
+    color: $color-text-primary;
+    white-space: pre-line;
+  }
+}

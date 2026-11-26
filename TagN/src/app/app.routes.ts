@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
+import { doctorGuard } from './core/guards/doctor.guard';
 
 export const routes: Routes = [
-  // Layout Institucional Completo
+  // Layout Institucional (navbar + footer completo)
   {
     path: '',
     loadComponent: () =>
@@ -11,6 +12,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        pathMatch: 'full',
         loadComponent: () =>
           import('./features/home/home.component').then((m) => m.HomeComponent),
         title: 'Drª. Marcela Medeiros — Odontologia & Harmonização',
@@ -18,7 +20,7 @@ export const routes: Routes = [
     ],
   },
 
-  // Layout Focado / Minimalista
+  // Layout Focado / Minimalista (header simples, sem navbar)
   {
     path: '',
     loadComponent: () =>
@@ -47,10 +49,36 @@ export const routes: Routes = [
         data: { headerTitle: 'AGENDAMENTO DE CONSULTA' },
         title: 'Agendamento de Consulta — Drª. Marcela Medeiros',
       },
+      {
+        path: 'meus-agendamentos',
+        loadComponent: () =>
+          import('./features/my-appointments/my-appointments.component').then(
+            (m) => m.MyAppointmentsComponent
+          ),
+        data: { headerTitle: 'AGENDAMENTO DE CONSULTA' },
+        title: 'Meus Agendamentos — Drª. Marcela Medeiros',
+      },
+      {
+        path: 'agendamentos',
+        canActivate: [doctorGuard],
+        loadComponent: () =>
+          import('./features/doctor-appointments/doctor-appointments.component').then(
+            (m) => m.DoctorAppointmentsComponent
+          ),
+        data: { headerTitle: 'GESTÃO DE AGENDAMENTOS' },
+        title: 'Gestão de Agendamentos — Drª. Marcela Medeiros',
+      },
+      {
+        path: 'conta',
+        loadComponent: () =>
+          import('./features/account/account.component').then((m) => m.AccountComponent),
+        data: { headerTitle: 'MINHA CONTA' },
+        title: 'Minha Conta — Drª. Marcela Medeiros',
+      },
     ],
   },
 
-  // Fallback para rota inicial
+  // Fallback
   {
     path: '**',
     redirectTo: '',

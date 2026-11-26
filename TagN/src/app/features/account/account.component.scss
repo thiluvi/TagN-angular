@@ -1,0 +1,454 @@
+@use 'styles/variables' as *;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Layout Geral
+// ─────────────────────────────────────────────────────────────────────────────
+.account-page {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $spacing-56 $section-padding-x $spacing-3xl;
+  min-height: 70vh;
+
+  @media (max-width: 1100px) {
+    padding: $spacing-xl $spacing-lg $spacing-2xl;
+  }
+
+  @media (max-width: 768px) {
+    padding: $spacing-lg $spacing-md $spacing-xl;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Header
+// ─────────────────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-40;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.page-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-display-3;
+  color: $color-brand-dark;
+  line-height: $line-height-title;
+  margin: 0 0 $spacing-sm;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-h2;
+  }
+}
+
+.page-subtitle {
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.btn-outline-header {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg;
+  height: 44px;
+  background-color: $color-bg-primary;
+  color: $color-brand-dark;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-button;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-bg-secondary;
+    border-color: $color-brand-primary;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Não autenticado
+// ─────────────────────────────────────────────────────────────────────────────
+.unauth-card {
+  padding: $spacing-40;
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-md;
+
+  .unauth-title {
+    font-family: $font-family-serif;
+    font-size: $font-size-h3;
+    color: $color-brand-dark;
+    margin: 0;
+  }
+
+  .unauth-desc {
+    font-size: $font-size-body-sm;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Body (Sidebar + Main)
+// ─────────────────────────────────────────────────────────────────────────────
+.page-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: $spacing-40;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sidebar
+// ─────────────────────────────────────────────────────────────────────────────
+.page-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-18;
+}
+
+.sidebar-label {
+  font-size: $font-size-badge;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-caps;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+  }
+}
+
+.sidebar-tab {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: $spacing-10 $spacing-md;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+
+  .tab-left {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  &:hover {
+    background-color: $color-bg-secondary;
+    color: $color-brand-dark;
+  }
+
+  &--active {
+    background-color: $color-bg-secondary;
+    border-left-color: $color-brand-primary;
+    color: $color-brand-dark;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.sidebar-divider {
+  height: $border-width;
+  background-color: $color-border-primary;
+  margin: $spacing-xs 0;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.sidebar-quote-card {
+  padding: $spacing-20;
+  background-color: $color-bg-secondary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+
+  .quote-title {
+    font-family: $font-family-serif;
+    font-size: 1.125rem;
+    color: $color-brand-dark;
+    line-height: $line-height-heading;
+    margin: 0;
+  }
+
+  .quote-body {
+    font-size: $font-size-caption;
+    color: $color-text-secondary;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+
+  .quote-rule {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background-color: $color-border-gold;
+    margin: $spacing-xs 0;
+  }
+
+  .quote-author {
+    font-family: $font-family-serif;
+    font-size: $font-size-body-sm;
+    color: $color-brand-primary;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Card
+// ─────────────────────────────────────────────────────────────────────────────
+.account-card {
+  background-color: $color-bg-primary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  padding: $spacing-36;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  @media (max-width: 600px) {
+    padding: $spacing-20;
+  }
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.card-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-h3;
+  color: $color-brand-dark;
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $spacing-lg;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-item {
+  padding: $spacing-md;
+  background-color: $color-bg-secondary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .info-label {
+    font-size: $font-size-badge;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-caps;
+    color: $color-text-muted;
+  }
+
+  .info-value {
+    font-size: $font-size-body-sm;
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+    word-break: break-word;
+  }
+}
+
+.card-divider {
+  height: $border-width;
+  background-color: $color-border-primary;
+}
+
+.sub-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .sub-title {
+    font-family: $font-family-serif;
+    font-size: 1.375rem;
+    color: $color-brand-dark;
+    margin: 0;
+  }
+
+  .sub-desc {
+    font-size: $font-size-caption;
+    color: $color-text-secondary;
+    margin: 0 0 $spacing-xs;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Formulários
+// ─────────────────────────────────────────────────────────────────────────────
+.inline-form {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &--grow {
+    flex: 1;
+  }
+}
+
+.form-label {
+  font-size: $font-size-caption;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 $spacing-md;
+  font-family: inherit;
+  font-size: $font-size-body-sm;
+  color: $color-text-primary;
+  background-color: $color-bg-secondary;
+  border: $border-width solid $color-border-primary;
+  border-radius: $border-radius-sm;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, background-color 0.15s;
+
+  &:focus {
+    border-color: $color-brand-primary;
+    background-color: $color-bg-primary;
+  }
+
+  &--error {
+    border-color: #a03030;
+  }
+}
+
+.field-error {
+  font-size: 11px;
+  color: #8c2828;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $spacing-xs;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 $spacing-lg;
+  background-color: $color-brand-primary;
+  color: $color-text-light;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-button;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: $color-brand-dark;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alertas
+// ─────────────────────────────────────────────────────────────────────────────
+.alert {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-caption;
+
+  &--success {
+    background-color: rgba($color-brand-primary, 0.1);
+    border: $border-width solid rgba($color-brand-primary, 0.3);
+    color: $color-brand-dark;
+  }
+
+  &--error {
+    background-color: rgba(160, 48, 48, 0.08);
+    border: $border-width solid rgba(160, 48, 48, 0.3);
+    color: #8c2828;
+  }
+}

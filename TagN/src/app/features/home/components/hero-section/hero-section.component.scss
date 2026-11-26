@@ -71,10 +71,13 @@
     padding: 0 $button-padding-x;
     background-color: $color-bg-brand;
     color: $color-text-light;
+    border: none;
     border-radius: $button-border-radius;
+    font-family: inherit;
     font-size: $button-font-size;
     font-weight: $button-font-weight;
     text-decoration: none;
+    cursor: pointer;
     transition: opacity 0.2s ease, transform 0.2s ease;
 
     &:hover {

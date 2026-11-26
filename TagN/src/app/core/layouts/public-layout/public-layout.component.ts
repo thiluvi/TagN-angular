@@ -23,17 +23,28 @@ export class PublicLayoutComponent {
     this.isMobileMenuOpen.set(false);
   }
 
+  protected onScheduleClick(): void {
+    this.closeMobileMenu();
+    if (this.authService.isAuthenticated()) {
+      void this.router.navigate(['/agendamento']);
+    } else {
+      this.authService.openAuthModal('login', '/agendamento');
+    }
+  }
+
   protected onMobileOption(option: 'conta' | 'agendamentos'): void {
     this.closeMobileMenu();
 
     if (this.authService.isAuthenticated()) {
       if (option === 'agendamentos') {
-        void this.router.navigate(['/agendamento']);
+        void this.router.navigate([
+          this.authService.isDoctor() ? '/agendamentos' : '/meus-agendamentos',
+        ]);
       } else {
-        void this.router.navigate(['/login']);
+        void this.router.navigate(['/conta']);
       }
     } else {
-      const destination = option === 'agendamentos' ? '/agendamento' : '/login';
+      const destination = option === 'agendamentos' ? '/meus-agendamentos' : '/conta';
       this.authService.openAuthModal('login', destination);
     }
   }

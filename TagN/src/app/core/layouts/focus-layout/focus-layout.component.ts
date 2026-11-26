@@ -23,10 +23,10 @@ export class FocusLayoutComponent {
   );
 
   private extractHeaderTitle(route: ActivatedRoute): string {
-    let current = route;
-    while (current.firstChild) {
+    let current: ActivatedRoute | null = route;
+    while (current?.firstChild) {
       current = current.firstChild;
     }
-    return (current.snapshot.data['headerTitle'] as string | undefined) ?? '';
+    return (current?.snapshot?.data?.['headerTitle'] as string | undefined) ?? '';
   }
 }

@@ -1,0 +1,508 @@
+<section class="doc-apts-page">
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">Agendamentos</h1>
+      <p class="page-subtitle">Uma visão completa da agenda, dos próximos encontros ao histórico.</p>
+    </div>
+
+    <span class="total-badge">{{ totalCount() }} {{ totalCount() === 1 ? 'agendamento' : 'agendamentos' }} no total</span>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="alert alert--error" role="alert">{{ errorMessage() }}</div>
+  }
+
+  <!-- ── FILTROS ─────────────────────────────────────────── -->
+  <section class="filter-card" aria-label="Pesquisar e filtrar agendamentos">
+    <div class="filter-header">
+      <span class="filter-title">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="7" y1="12" x2="17" y2="12" />
+          <line x1="10" y1="18" x2="14" y2="18" />
+        </svg>
+        Pesquisar e filtrar
+      </span>
+
+      <button type="button" class="btn-clear" (click)="clearFilters()">Limpar filtros</button>
+    </div>
+
+    <div class="filter-grid">
+      <div class="filter-field">
+        <label for="filter-search" class="filter-label">Paciente ou identificador</label>
+        <div class="input-icon-wrap">
+          <input
+            id="filter-search"
+            type="text"
+            class="filter-input"
+            placeholder="Buscar nome ou AG-2026..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event); upcomingPage.set(1); historyPage.set(1)"
+          />
+          <svg class="input-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-period" class="filter-label">Período</label>
+        <select
+          id="filter-period"
+          class="filter-select"
+          [ngModel]="periodFilter()"
+          (ngModelChange)="periodFilter.set($event); upcomingPage.set(1); historyPage.set(1)"
+        >
+          <option value="all">Todas as datas</option>
+          <option value="today">Hoje</option>
+          <option value="week">Próximos 7 dias</option>
+          <option value="month">Este mês</option>
+          <option value="custom">Intervalo de datas</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-spec" class="filter-label">Tipo de consulta</label>
+        <select
+          id="filter-spec"
+          class="filter-select"
+          [ngModel]="specialtyFilter()"
+          (ngModelChange)="specialtyFilter.set($event); upcomingPage.set(1); historyPage.set(1)"
+        >
+          <option value="">Todos os tipos</option>
+          @for (spec of specialtyOptions; track spec.value) {
+            <option [value]="spec.value">{{ spec.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter-status" class="filter-label">Status</label>
+        <select
+          id="filter-status"
+          class="filter-select"
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event); upcomingPage.set(1); historyPage.set(1)"
+        >
+          <option value="">Todos os status</option>
+          <option value="PENDING">Aguardando confirmação</option>
+          <option value="CONFIRMED">Confirmado</option>
+          <option value="COMPLETED">Realizado</option>
+          <option value="CANCELLED">Cancelado</option>
+        </select>
+      </div>
+    </div>
+
+    @if (periodFilter() === 'custom') {
+      <div class="date-range-row">
+        <div class="filter-field">
+          <label for="filter-start-date" class="filter-label">Data inicial</label>
+          <input
+            id="filter-start-date"
+            type="date"
+            class="filter-input filter-input--date"
+            [ngModel]="startDate()"
+            [max]="endDate() || null"
+            (ngModelChange)="startDate.set($event); upcomingPage.set(1); historyPage.set(1)"
+          />
+        </div>
+
+        <div class="filter-field">
+          <label for="filter-end-date" class="filter-label">Data final</label>
+          <input
+            id="filter-end-date"
+            type="date"
+            class="filter-input filter-input--date"
+            [ngModel]="endDate()"
+            [min]="startDate() || null"
+            (ngModelChange)="endDate.set($event); upcomingPage.set(1); historyPage.set(1)"
+          />
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- ── KPI CARDS ───────────────────────────────────────── -->
+  <section class="kpi-grid" aria-label="Resumo dos agendamentos">
+    <div class="kpi-card">
+      <div class="kpi-left">
+        <span class="kpi-number">{{ pad(upcomingAppointments().length) }}</span>
+        <div class="kpi-text">
+          <strong>Próximos agendamentos</strong>
+          <span>{{ upcomingConfirmedCount() }} confirmados · {{ upcomingPendingCount() }} aguardando</span>
+        </div>
+      </div>
+      <svg class="kpi-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-left">
+        <span class="kpi-number">{{ pad(upcomingPendingCount()) }}</span>
+        <div class="kpi-text">
+          <strong>Aguardando confirmação</strong>
+          <span>Entre os próximos agendamentos</span>
+        </div>
+      </div>
+      <svg class="kpi-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <polyline points="12 7 12 12 15 14" />
+      </svg>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-left">
+        <span class="kpi-number">{{ pad(historyAppointments().length) }}</span>
+        <div class="kpi-text">
+          <strong>Agendamentos no histórico</strong>
+          <span>{{ historyCompletedCount() }} realizados · {{ historyCancelledCount() }} cancelados</span>
+        </div>
+      </div>
+      <svg class="kpi-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <polyline points="1 4 1 10 7 10" />
+        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+      </svg>
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <div class="loading-box">Carregando agendamentos...</div>
+  } @else {
+    <!-- ── PRÓXIMOS ──────────────────────────────────────── -->
+    <section class="table-section" aria-labelledby="upcoming-heading">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 id="upcoming-heading" class="section-title">Próximos</h2>
+          <span class="section-count">{{ pad(upcomingAppointments().length) }}</span>
+        </div>
+        <span class="section-meta">Data mais próxima primeiro</span>
+      </div>
+
+      @if (upcomingAppointments().length === 0) {
+        <div class="empty-card">Nenhum agendamento futuro encontrado.</div>
+      } @else {
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="apts-table">
+              <thead>
+                <tr>
+                  <th>Paciente / identificador</th>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Tipo de consulta</th>
+                  <th>Status</th>
+                  <th class="col-actions">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (apt of pagedUpcoming(); track apt.id) {
+                  <tr>
+                    <td>
+                      <div class="cell-primary">{{ apt.userName }}</div>
+                      <div class="cell-sub">{{ formatCode(apt) }}</div>
+                    </td>
+                    <td>
+                      <div class="cell-primary">{{ formatDateShort(apt.scheduledAt) }}</div>
+                      <div class="cell-sub">{{ formatWeekday(apt.scheduledAt) }}</div>
+                    </td>
+                    <td class="cell-time">{{ formatTime(apt.scheduledAt) }}</td>
+                    <td>{{ formatSpecialty(apt.specialty) }}</td>
+                    <td>
+                      <span
+                        class="status-pill"
+                        [class.status-pill--confirmed]="apt.status === 'CONFIRMED'"
+                        [class.status-pill--pending]="apt.status === 'PENDING'"
+                      >
+                        @if (apt.status === 'CONFIRMED') {
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                        } @else {
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></svg>
+                        }
+                        {{ formatStatusLabel(apt) }}
+                      </span>
+                    </td>
+                    <td class="col-actions">
+                      <div class="row-actions">
+                        @if (apt.status === 'PENDING') {
+                          <button
+                            type="button"
+                            class="btn-action btn-action--confirm"
+                            (click)="startAction(apt, 'CONFIRM')"
+                            title="Confirmar consulta"
+                          >
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Confirmar</span>
+                          </button>
+                        }
+
+                        @if (apt.status === 'CONFIRMED') {
+                          <button
+                            type="button"
+                            class="btn-action btn-action--confirm"
+                            (click)="startAction(apt, 'COMPLETE')"
+                            title="Finalizar agendamento"
+                          >
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Finalizar</span>
+                          </button>
+                        }
+
+                        <button
+                          type="button"
+                          class="btn-action btn-action--cancel"
+                          (click)="startAction(apt, 'CANCEL')"
+                          title="Cancelar agendamento"
+                        >
+                          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                          <span>Cancelar</span>
+                        </button>
+
+                        <button type="button" class="btn-details" (click)="openDetails(apt)">
+                          <span>Ver detalhes</span>
+                          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span>Exibindo {{ pagedUpcoming().length }} de {{ upcomingAppointments().length }} agendamentos</span>
+            <div class="pagination">
+              <button type="button" class="page-btn" [disabled]="upcomingPage() === 1" (click)="setUpcomingPage(upcomingPage() - 1)">Anterior</button>
+              <span class="page-current">{{ upcomingPage() }}</span>
+              <button type="button" class="page-btn" [disabled]="upcomingPage() >= upcomingTotalPages()" (click)="setUpcomingPage(upcomingPage() + 1)">Próxima</button>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- ── HISTÓRICO ─────────────────────────────────────── -->
+    <section class="table-section" aria-labelledby="history-heading">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 id="history-heading" class="section-title">Histórico</h2>
+          <span class="section-count">{{ pad(historyAppointments().length) }}</span>
+        </div>
+        <span class="section-meta">Mais recentes primeiro</span>
+      </div>
+
+      @if (historyAppointments().length === 0) {
+        <div class="empty-card">Nenhum agendamento no histórico.</div>
+      } @else {
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="apts-table">
+              <thead>
+                <tr>
+                  <th>Paciente / identificador</th>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Tipo de consulta</th>
+                  <th>Status</th>
+                  <th class="col-actions">Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (apt of pagedHistory(); track apt.id) {
+                  <tr>
+                    <td>
+                      <div class="cell-primary">{{ apt.userName }}</div>
+                      <div class="cell-sub">{{ formatCode(apt) }}</div>
+                    </td>
+                    <td>
+                      <div class="cell-primary">{{ formatDateShort(apt.scheduledAt) }}</div>
+                      <div class="cell-sub">{{ formatWeekday(apt.scheduledAt) }}</div>
+                    </td>
+                    <td class="cell-time">{{ formatTime(apt.scheduledAt) }}</td>
+                    <td>{{ formatSpecialty(apt.specialty) }}</td>
+                    <td>
+                      <span
+                        class="status-pill"
+                        [class.status-pill--done]="apt.status === 'COMPLETED' || apt.status === 'CONFIRMED'"
+                        [class.status-pill--cancelled]="apt.status === 'CANCELLED'"
+                        [class.status-pill--pending]="apt.status === 'PENDING'"
+                      >
+                        @if (apt.status === 'CANCELLED') {
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        } @else {
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                        }
+                        {{ formatStatusLabel(apt, true) }}
+                      </span>
+                    </td>
+                    <td class="col-actions">
+                      <button type="button" class="btn-details" (click)="openDetails(apt)">
+                        <span>Ver detalhes</span>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                          <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span>Exibindo {{ pagedHistory().length }} de {{ historyAppointments().length }} agendamentos</span>
+            <div class="pagination">
+              <button type="button" class="page-btn" [disabled]="historyPage() === 1" (click)="setHistoryPage(historyPage() - 1)">Anterior</button>
+              <span class="page-current">{{ historyPage() }}</span>
+              <button type="button" class="page-btn" [disabled]="historyPage() >= historyTotalPages()" (click)="setHistoryPage(historyPage() + 1)">Próxima</button>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- ── OVERLAY DE CONFIRMAÇÃO E NOTA ─────────────────────── -->
+  @if (actionModal(); as modal) {
+    <div class="modal-backdrop" (click)="closeActionModal()" role="dialog" aria-modal="true">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        @if (modal.step === 'confirm') {
+          <span class="modal-eyebrow">CONFIRMAÇÃO</span>
+          <h3 class="modal-title">
+            @if (modal.type === 'CONFIRM') {
+              Deseja confirmar este agendamento?
+            } @else if (modal.type === 'COMPLETE') {
+              Deseja finalizar este agendamento?
+            } @else {
+              Deseja cancelar este agendamento?
+            }
+          </h3>
+          <p class="modal-desc">
+            Paciente: <strong>{{ modal.appointment.userName }}</strong><br />
+            {{ formatDateShort(modal.appointment.scheduledAt) }} às {{ formatTime(modal.appointment.scheduledAt) }} ·
+            {{ formatSpecialty(modal.appointment.specialty) }}
+          </p>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-outline" [disabled]="isSubmitting()" (click)="closeActionModal()">
+              Voltar
+            </button>
+
+            <button
+              type="button"
+              class="btn-action"
+              [class.btn-action--confirm]="modal.type === 'CONFIRM' || modal.type === 'COMPLETE'"
+              [class.btn-action--cancel]="modal.type === 'CANCEL'"
+              [disabled]="isSubmitting()"
+              (click)="confirmFirstStep()"
+            >
+              @if (isSubmitting()) {
+                Processando...
+              } @else if (modal.type === 'CONFIRM') {
+                Confirmar agendamento
+              } @else if (modal.type === 'COMPLETE') {
+                Sim, finalizar
+              } @else {
+                Sim, cancelar
+              }
+            </button>
+          </div>
+        } @else {
+          <span class="modal-eyebrow">OBSERVAÇÃO</span>
+          <h3 class="modal-title">Deseja adicionar alguma nota ao agendamento?</h3>
+          <p class="modal-desc">
+            Caso queira registrar uma observação para o paciente ou para o histórico, escreva abaixo.
+          </p>
+
+          <textarea
+            class="note-textarea"
+            rows="4"
+            placeholder="Escreva uma nota opcional..."
+            [ngModel]="actionNote()"
+            (ngModelChange)="actionNote.set($event)"
+          ></textarea>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-outline" [disabled]="isSubmitting()" (click)="submitWithNote(false)">
+              Sem nota
+            </button>
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="isSubmitting()"
+              (click)="submitWithNote(true)"
+            >
+              {{ isSubmitting() ? 'Salvando...' : 'Salvar e concluir' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ── MODAL DE DETALHES ──────────────────────────────────── -->
+  @if (selectedDetail(); as detail) {
+    <div class="modal-backdrop" (click)="closeDetails()" role="dialog" aria-modal="true" aria-label="Detalhes do agendamento">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="detail-header">
+          <div>
+            <span class="modal-eyebrow">DETALHES DO AGENDAMENTO</span>
+            <h3 class="modal-title">{{ detail.userName }}</h3>
+          </div>
+          <button type="button" class="detail-close" (click)="closeDetails()" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="detail-rows">
+          <div class="detail-row">
+            <span class="detail-label">Identificador</span>
+            <span class="detail-value">{{ formatCode(detail) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Data e horário</span>
+            <span class="detail-value">{{ formatDateShort(detail.scheduledAt) }} · {{ formatTime(detail.scheduledAt) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Tipo de consulta</span>
+            <span class="detail-value">{{ formatSpecialty(detail.specialty) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">{{ formatStatusLabel(detail) }}</span>
+          </div>
+          @if (detail.notes) {
+            <div class="detail-row detail-row--column">
+              <span class="detail-label">Notas / Observações</span>
+              <p class="detail-notes">{{ detail.notes }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-primary" (click)="closeDetails()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

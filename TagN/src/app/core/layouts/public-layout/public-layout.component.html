@@ -13,7 +13,7 @@
         <a routerLink="/" fragment="atuacao" class="nav-link">Áreas de atuação</a>
         <a routerLink="/" fragment="trabalhos" class="nav-link">Trabalhos</a>
         <a routerLink="/" fragment="duvidas" class="nav-link">Dúvidas frequentes</a>
-        <a routerLink="/agendamento" class="nav-link nav-link--cta">Agendar consulta</a>
+        <button class="nav-link nav-link--cta" (click)="onScheduleClick()">Agendar consulta</button>
       </nav>
 
       <!-- Ações no canto direito -->
@@ -51,9 +51,11 @@
         <a routerLink="/" fragment="atuacao" class="mobile-nav-link" (click)="closeMobileMenu()">Áreas de atuação</a>
         <a routerLink="/" fragment="trabalhos" class="mobile-nav-link" (click)="closeMobileMenu()">Trabalhos</a>
         <a routerLink="/" fragment="duvidas" class="mobile-nav-link" (click)="closeMobileMenu()">Dúvidas frequentes</a>
-        <a routerLink="/agendamento" class="mobile-nav-link mobile-nav-link--cta" (click)="closeMobileMenu()">Agendar consulta</a>
+        <button class="mobile-nav-link mobile-nav-link--cta" (click)="onScheduleClick()">Agendar consulta</button>
         <button type="button" class="mobile-nav-btn" (click)="onMobileOption('conta')">Conta</button>
-        <button type="button" class="mobile-nav-btn" (click)="onMobileOption('agendamentos')">Meus agendamentos</button>
+        <button type="button" class="mobile-nav-btn" (click)="onMobileOption('agendamentos')">
+          {{ authService.isDoctor() ? 'Agendamentos' : 'Meus agendamentos' }}
+        </button>
       </nav>
     }
   </header>
@@ -84,7 +86,7 @@
             <li><a routerLink="/" fragment="atuacao" class="footer-link">Áreas de atuação</a></li>
             <li><a routerLink="/" fragment="trabalhos" class="footer-link">Trabalhos</a></li>
             <li><a routerLink="/" fragment="duvidas" class="footer-link">Dúvidas frequentes</a></li>
-            <li><a routerLink="/agendamento" class="footer-link footer-link--highlight">Agendar consulta</a></li>
+            <li><button class="footer-link footer-link--highlight" (click)="onScheduleClick()">Agendar consulta</button></li>
           </ul>
         </div>
 

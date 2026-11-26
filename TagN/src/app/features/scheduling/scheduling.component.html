@@ -1,141 +1,225 @@
-<section class="scheduling-section">
-  <div class="scheduling-container">
-    <header class="scheduling-header">
-      <h1 class="scheduling-title">Seu cuidado começa aqui.</h1>
-      <p class="scheduling-subtitle">
-        Complete os dados necessários para a consulta. Em seguida, escolha o melhor dia e horário.
-      </p>
-    </header>
+<section class="sched-page">
 
-    @if (!authService.isAuthenticated()) {
-      <div class="unauth-card">
-        <div class="unauth-icon-circle">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </div>
-        <div class="unauth-content">
-          <h2 class="unauth-title">Acesse sua conta para agendar</h2>
-          <p class="unauth-desc">
-            Para solicitar e acompanhar suas consultas com a Drª. Marcela Medeiros, faça seu login ou cadastre-se em instantes.
-          </p>
-          <div class="unauth-actions">
-            <button type="button" class="btn-primary" (click)="authService.openAuthModal('login', '/agendamento')">
-              Entrar na conta
-            </button>
-            <button type="button" class="btn-secondary" (click)="authService.openAuthModal('register', '/agendamento')">
-              Criar conta
-            </button>
-          </div>
+  <!-- ── HEADER ──────────────────────────────────────────── -->
+  <header class="sched-header">
+    <h1 class="sched-title">Seu cuidado começa aqui.</h1>
+    <p class="sched-subtitle">Agora, escolha um dia e um horário para solicitar sua consulta.</p>
+  </header>
+
+  <!-- ── BODY ─────────────────────────────────────────────── -->
+  <div class="sched-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sched-sidebar">
+      <p class="sidebar-label">SUA CONSULTA</p>
+
+      <div class="sidebar-step">
+        <span class="step-number">01</span>
+        <div class="step-info">
+          <strong>Dia, horário e especialidade</strong>
+          <span>Escolha seu momento</span>
         </div>
       </div>
-    } @else {
-      <!-- Formulário de Agendamento -->
-      <div class="scheduling-grid">
-        <div class="card form-card">
-          <h2 class="card-title">Novo Agendamento</h2>
 
-          @if (successMessage()) {
-            <div class="alert-success" role="alert">
-              {{ successMessage() }}
-            </div>
+      <div class="sidebar-quote-card">
+        <p class="quote-title">Um tempo para ouvir. Um cuidado para você.</p>
+        <p class="quote-body">
+          A consulta é o primeiro passo para entender suas necessidades
+          e conversar sobre as possibilidades de cuidado.
+        </p>
+        <span class="quote-rule"></span>
+        <em class="quote-author">Drª. Marcela Medeiros</em>
+      </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main class="sched-main">
+
+      <!-- Alertas globais -->
+      @if (successMessage()) {
+        <div class="alert alert--success" role="alert">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          {{ successMessage() }}
+        </div>
+      }
+      @if (errorMessage()) {
+        <div class="alert alert--error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      <h2 class="panel-title">Dia, horário e especialidade</h2>
+      <p class="panel-subtitle">Selecione sua especialidade, uma data no calendário e, depois, um horário.</p>
+
+      <!-- Especialidades (múltipla escolha) -->
+      <div class="specialty-section">
+        <span class="specialty-heading">Especialidades (selecione uma ou mais)</span>
+        <div class="specialty-grid" role="group" aria-label="Especialidades">
+          @for (spec of specialties; track spec.value) {
+            <button
+              type="button"
+              class="specialty-chip"
+              [class.specialty-chip--selected]="isSpecialtySelected(spec.value)"
+              [attr.aria-pressed]="isSpecialtySelected(spec.value)"
+              (click)="toggleSpecialty(spec.value)"
+            >
+              <span>{{ spec.label }}</span>
+              @if (isSpecialtySelected(spec.value)) {
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              }
+            </button>
           }
+        </div>
+      </div>
 
-          @if (errorMessage()) {
-            <div class="alert-error" role="alert">
-              {{ errorMessage() }}
-            </div>
-          }
+      <!-- Calendário + Horários -->
+      <div class="cal-time-grid">
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
-            <div class="form-group">
-              <label for="specialty" class="form-label">Especialidade Desejada</label>
-              <select id="specialty" formControlName="specialty" class="form-select">
-                <option value="ODONTOLOGIA">Odontologia Clínica & Estética</option>
-                <option value="HARMONIZACAO">Harmonização Facial & Orofacial</option>
-              </select>
-            </div>
+        <!-- Calendário -->
+        <div class="calendar-card">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" (click)="prevMonth()" aria-label="Mês anterior">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="cal-month-label">{{ monthLabel() }}</span>
+            <button class="cal-nav-btn" (click)="nextMonth()" aria-label="Próximo mês">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="date" class="form-label">Data da Consulta</label>
-                <input id="date" type="date" formControlName="date" class="form-input" [min]="minDate">
-              </div>
+          <div class="cal-grid">
+            <span class="cal-weekday" *ngFor="let w of ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']">{{ w }}</span>
 
-              <div class="form-group">
-                <label for="time" class="form-label">Horário Preferencial</label>
-                <select id="time" formControlName="time" class="form-select">
-                  <option value="09:00">09:00</option>
-                  <option value="10:00">10:00</option>
-                  <option value="11:00">11:00</option>
-                  <option value="14:00">14:00</option>
-                  <option value="15:00">15:00</option>
-                  <option value="16:00">16:00</option>
-                  <option value="17:00">17:00</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="notes" class="form-label">Observações ou queixa principal (opcional)</label>
-              <textarea
-                id="notes"
-                formControlName="notes"
-                rows="3"
-                class="form-textarea"
-                placeholder="Conte brevemente o que você busca na consulta..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-submit" [disabled]="isLoading() || form.invalid">
-              @if (isLoading()) {
-                Solicitando consulta...
+            @for (day of calendarDays(); track $index) {
+              @if (day === null) {
+                <span class="cal-cell cal-cell--empty"></span>
               } @else {
-                Confirmar Solicitação de Agendamento
+                <button
+                  class="cal-cell"
+                  [class.cal-cell--selected]="isSelected(day)"
+                  [class.cal-cell--past]="isPast(day)"
+                  [class.cal-cell--other-month]="!isSameMonth(day)"
+                  (click)="selectDay(day)"
+                  [disabled]="isPast(day)"
+                >
+                  {{ day.getDate() }}
+                </button>
               }
-            </button>
-          </form>
-        </div>
-
-        <!-- Meus Agendamentos -->
-        <div class="card appointments-card">
-          <div class="appointments-header">
-            <h2 class="card-title">Minhas Consultas</h2>
-            <button type="button" class="btn-refresh" (click)="loadAppointments()" title="Atualizar agendamentos">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-              </svg>
-            </button>
+            }
           </div>
 
-          @if (appointments().length === 0) {
-            <div class="empty-state">
-              <p class="empty-text">Nenhuma consulta agendada até o momento.</p>
-            </div>
-          } @else {
-            <div class="appointment-list">
-              @for (apt of appointments(); track apt.id) {
-                <article class="appointment-item">
-                  <div class="appointment-meta">
-                    <span class="appointment-specialty">
-                      {{ apt.specialty === 'ODONTOLOGIA' ? 'Odontologia' : 'Harmonização' }}
-                    </span>
-                    <span class="appointment-status" [class]="'status--' + apt.status.toLowerCase()">
-                      {{ formatStatus(apt.status) }}
-                    </span>
-                  </div>
-                  <div class="appointment-date">
-                    {{ apt.scheduledAt | date: "dd/MM/yyyy 'às' HH:mm" }}
-                  </div>
-                  @if (apt.notes) {
-                    <p class="appointment-notes">{{ apt.notes }}</p>
-                  }
-                </article>
-              }
-            </div>
-          }
+          <div class="cal-legend">
+            <span class="legend-dot"></span>
+            <span class="legend-text">Dia selecionado</span>
+          </div>
         </div>
+
+        <!-- Painel de horários -->
+        @if (selectedDate()) {
+          <div class="time-panel">
+            <p class="time-weekday">{{ dayLabel() | uppercase }}</p>
+            <h3 class="time-day-label">{{ dayNumber() }}</h3>
+
+            <!-- Manhã -->
+            <div class="time-group">
+              <div class="time-group-header">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <span class="time-period-label">Manhã</span>
+                <span class="time-count">· {{ morningSlots.length }} opções</span>
+              </div>
+              <div class="time-slots">
+                @for (slot of morningSlots; track slot.time) {
+                  <button
+                    type="button"
+                    class="slot-btn"
+                    [class.slot-btn--selected]="isSlotSelected(slot)"
+                    [class.slot-btn--unavailable]="isSlotUnavailable(slot)"
+                    [disabled]="isSlotUnavailable(slot)"
+                    [title]="isSlotUnavailable(slot) ? 'Horário indisponível' : ''"
+                    (click)="selectSlot(slot)"
+                  >
+                    {{ slot.time }}
+                    @if (isSlotSelected(slot)) {
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Tarde -->
+            <div class="time-group">
+              <div class="time-group-header">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.75 4.09l-2.53 2.94-1.54-1.54 2.94-2.53zM21 11.84l-3.52.26-.06-2.08 3.52-.26zM6.54 19.56l-2.94 2.53-1.54-1.54 2.53-2.94zM3.5 11.84l3.52.26.06-2.08-3.52-.26zM6.54 4.09L5 5.63l2.94 2.53 1.54-1.54zM12 2a9.5 9.5 0 1 0 9.5 9.5A9.5 9.5 0 0 0 12 2zm0 17a7.5 7.5 0 1 1 7.5-7.5A7.5 7.5 0 0 1 12 19z"/></svg>
+                <span class="time-period-label">Tarde</span>
+                <span class="time-count">· {{ afternoonSlots.length }} opções</span>
+              </div>
+              <div class="time-slots">
+                @for (slot of afternoonSlots; track slot.time) {
+                  <button
+                    type="button"
+                    class="slot-btn"
+                    [class.slot-btn--selected]="isSlotSelected(slot)"
+                    [class.slot-btn--unavailable]="isSlotUnavailable(slot)"
+                    [disabled]="isSlotUnavailable(slot)"
+                    [title]="isSlotUnavailable(slot) ? 'Horário indisponível' : ''"
+                    (click)="selectSlot(slot)"
+                  >
+                    {{ slot.time }}
+                    @if (isSlotSelected(slot)) {
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+
+            <p class="time-note">Horários apresentados no formato de 24 horas.</p>
+          </div>
+        }
       </div>
-    }
+
+      <!-- Resumo da escolha -->
+      @if (summaryReady()) {
+        <div class="summary-bar">
+          <div class="summary-left">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="summary-info">
+              <span class="summary-label">SUA ESCOLHA</span>
+              <strong class="summary-datetime">{{ summaryText() }}</strong>
+              <span class="summary-doctor">{{ specialtyLabel() }} · Drª. Marcela Medeiros</span>
+            </div>
+          </div>
+          <svg class="summary-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      }
+
+      <!-- Ações -->
+      <div class="panel-actions">
+        <a routerLink="/" class="btn-back">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Voltar
+        </a>
+
+        @if (!authService.isAuthenticated()) {
+          <button class="btn-submit" (click)="openAuthModal()">
+            Entrar para agendar
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        } @else {
+          <button
+            class="btn-submit"
+            [disabled]="!summaryReady() || isLoading()"
+            (click)="submit()"
+          >
+            @if (isLoading()) {
+              Solicitando...
+            } @else {
+              Solicitar agendamento
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            }
+          </button>
+        }
+      </div>
+
+    </main>
   </div>
 </section>

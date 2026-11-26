@@ -45,6 +45,6 @@ describe('ProfileMenuComponent', () => {
     fixture.detectChanges();
 
     expect(authService.isAuthModalOpen()).toBe(true);
-    expect(authService.pendingDestination()).toBe('/agendamento');
+    expect(authService.pendingDestination()).toBe('/meus-agendamentos');
   });
 });

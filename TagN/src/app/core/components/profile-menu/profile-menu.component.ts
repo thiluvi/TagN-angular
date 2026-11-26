@@ -27,13 +27,15 @@ export class ProfileMenuComponent {
 
     if (this.authService.isAuthenticated()) {
       if (option === 'agendamentos') {
-        void this.router.navigate(['/agendamento']);
+        void this.router.navigate([
+          this.authService.isDoctor() ? '/agendamentos' : '/meus-agendamentos',
+        ]);
       } else {
-        void this.router.navigate(['/login']);
+        void this.router.navigate(['/conta']);
       }
     } else {
       // Usuário não autenticado: abre o Overlay Flutuante para efetuar Login ou Cadastro
-      const targetDestination = option === 'agendamentos' ? '/agendamento' : '/login';
+      const targetDestination = option === 'agendamentos' ? '/meus-agendamentos' : '/conta';
       this.authService.openAuthModal('login', targetDestination);
     }
   }

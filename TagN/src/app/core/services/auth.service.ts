@@ -41,6 +41,9 @@ export class AuthService {
 
   readonly currentUser = signal<User | null>(this.loadStoredUser());
   readonly isAuthenticated = computed(() => !!this.currentUser());
+  readonly isDoctor = computed(
+    () => this.currentUser()?.email?.toLowerCase() === 'dramarcela@gmail.com'
+  );
 
   readonly isAuthModalOpen = signal(false);
   readonly authModalMode = signal<'login' | 'register' | 'forgot-password' | 'reset-password'>('login');
@@ -114,6 +117,24 @@ export class AuthService {
         }
       })
     );
+  }
+
+  updatePhone(phone: string): Observable<User> {
+    return this.http.put<User>(`${API_BASE}/users/me/phone`, { phone }).pipe(
+      tap((user) => {
+        this.currentUser.set(user);
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+        }
+      })
+    );
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${API_BASE}/users/me/password`, {
+      currentPassword,
+      newPassword,
+    });
   }
 
   private handlePostAuthSuccess(): void {

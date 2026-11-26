@@ -80,6 +80,9 @@
 
     &--cta {
       padding: $spacing-10 $spacing-20;
+      background: transparent;
+      font-family: inherit;
+      cursor: pointer;
       border: $border-width solid $color-border-primary;
       border-radius: $border-radius-sm;
 
