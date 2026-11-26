@@ -3,6 +3,7 @@ package com.tagn.backend.service;
 import com.tagn.backend.domain.entity.Appointment;
 import com.tagn.backend.domain.entity.User;
 import com.tagn.backend.domain.enums.AppointmentStatus;
+import com.tagn.backend.domain.enums.Role;
 import com.tagn.backend.dto.request.AppointmentRequest;
 import com.tagn.backend.dto.request.UpdateStatusRequest;
 import com.tagn.backend.dto.response.AppointmentResponse;
@@ -23,7 +24,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppointmentService {
 
-    private static final String DOCTOR_EMAIL = "dramarcela@gmail.com";
     private static final List<AppointmentStatus> OCCUPIED_STATUSES =
             List.of(AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED);
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
@@ -69,8 +69,8 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public List<AppointmentResponse> listAll(User actor) {
-        if (actor == null || !DOCTOR_EMAIL.equalsIgnoreCase(actor.getEmail())) {
-            throw new AccessDeniedException("Acesso restrito à Dra. Marcela.");
+        if (actor == null || actor.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Acesso restrito a administradores.");
         }
         return appointmentRepository.findAll()
                 .stream()
@@ -83,12 +83,12 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Agendamento não encontrado."));
 
-        boolean isDoctor = actor != null && DOCTOR_EMAIL.equalsIgnoreCase(actor.getEmail());
+        boolean isAdmin = actor != null && actor.getRole() == Role.ADMIN;
         boolean isOwnerCancelling = actor != null
                 && appointment.getUser().getId().equals(actor.getId())
                 && request.status() == AppointmentStatus.CANCELLED;
 
-        if (!isDoctor && !isOwnerCancelling) {
+        if (!isAdmin && !isOwnerCancelling) {
             throw new AccessDeniedException("Você não tem permissão para alterar este agendamento.");
         }
 

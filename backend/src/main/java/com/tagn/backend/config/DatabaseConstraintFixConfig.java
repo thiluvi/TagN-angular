@@ -24,6 +24,9 @@ public class DatabaseConstraintFixConfig {
                         "ALTER TABLE appointments ADD CONSTRAINT appointments_specialty_check " +
                         "CHECK (specialty IN ('ODONTOLOGIA', 'HARMONIZACAO', 'CLAREAMENTO', 'PREENCHIMENTO_LABIAL', 'BOTOX', 'BICHECTOMIA'))"
                 );
+                jdbcTemplate.update(
+                        "UPDATE users SET role = 'ADMIN' WHERE LOWER(email) = 'dramarcela@gmail.com' AND role <> 'ADMIN'"
+                );
             } catch (Exception ex) {
                 log.warn("Could not update appointments check constraints: {}", ex.getMessage());
             }

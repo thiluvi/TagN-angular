@@ -764,3 +764,10 @@
   align-items: center;
   gap: $spacing-md;
 }
+
+.reschedule-desc {
+  font-size: $font-size-body-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-body-sm;
+  margin: 0;
+}

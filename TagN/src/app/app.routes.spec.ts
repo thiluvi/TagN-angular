@@ -105,10 +105,10 @@ describe('App Routing & Schedule Button', () => {
     expect(fixture.nativeElement.querySelector('app-account')).toBeTruthy();
   });
 
-  it('should block /agendamentos for non-doctor users and allow dramarcela@gmail.com', async () => {
+  it('should block /agendamentos for non-admin users and allow ADMIN users', async () => {
     localStorage.setItem(
       'tagn_auth_user',
-      JSON.stringify({ id: '2', name: 'Paciente', email: 'paciente@teste.com' })
+      JSON.stringify({ id: '2', name: 'Paciente', email: 'paciente@teste.com', role: 'PATIENT' })
     );
 
     const fixture = TestBed.createComponent(App);
@@ -123,7 +123,7 @@ describe('App Routing & Schedule Button', () => {
     TestBed.resetTestingModule();
     localStorage.setItem(
       'tagn_auth_user',
-      JSON.stringify({ id: '3', name: 'Dra. Marcela', email: 'dramarcela@gmail.com' })
+      JSON.stringify({ id: '3', name: 'Admin', email: 'outroadmin@teste.com', role: 'ADMIN' })
     );
 
     await TestBed.configureTestingModule({

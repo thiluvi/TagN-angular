@@ -74,6 +74,7 @@ export class MyAppointmentsComponent implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly activeTab = signal<'proximos' | 'historico'>('proximos');
   protected readonly selectedDetail = signal<Appointment | null>(null);
+  protected readonly rescheduleTarget = signal<Appointment | null>(null);
   protected readonly cancellingId = signal<string | null>(null);
 
   protected readonly upcomingAppointments = computed(() => {
@@ -168,6 +169,23 @@ export class MyAppointmentsComponent implements OnInit {
 
   protected goToNewAppointment(): void {
     void this.router.navigate(['/agendamento']);
+  }
+
+  protected openRescheduleConfirm(apt: Appointment): void {
+    this.rescheduleTarget.set(apt);
+  }
+
+  protected closeRescheduleConfirm(): void {
+    this.rescheduleTarget.set(null);
+  }
+
+  protected confirmReschedule(): void {
+    const target = this.rescheduleTarget();
+    if (!target) return;
+    this.rescheduleTarget.set(null);
+    void this.router.navigate(['/agendamento'], {
+      queryParams: { rescheduleId: target.id },
+    });
   }
 
   protected padCount(count: number): string {

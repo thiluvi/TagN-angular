@@ -41,9 +41,8 @@ export class AuthService {
 
   readonly currentUser = signal<User | null>(this.loadStoredUser());
   readonly isAuthenticated = computed(() => !!this.currentUser());
-  readonly isDoctor = computed(
-    () => this.currentUser()?.email?.toLowerCase() === 'dramarcela@gmail.com'
-  );
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
+  readonly isDoctor = this.isAdmin;
 
   readonly isAuthModalOpen = signal(false);
   readonly authModalMode = signal<'login' | 'register' | 'forgot-password' | 'reset-password'>('login');

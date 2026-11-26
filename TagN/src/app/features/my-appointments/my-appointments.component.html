@@ -165,7 +165,7 @@
                             </svg>
                           </button>
 
-                          <button type="button" class="btn-outline" (click)="goToNewAppointment()">
+                          <button type="button" class="btn-outline" (click)="openRescheduleConfirm(apt)">
                             Solicitar reagendamento
                           </button>
                         </div>
@@ -346,6 +346,37 @@
             </button>
           }
           <button type="button" class="btn-primary" (click)="closeDetails()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── OVERLAY DE CONFIRMAÇÃO DE REAGENDAMENTO ───────────── -->
+  @if (rescheduleTarget(); as target) {
+    <div class="detail-backdrop" (click)="closeRescheduleConfirm()" role="dialog" aria-modal="true" aria-label="Confirmar reagendamento">
+      <div class="detail-modal" (click)="$event.stopPropagation()">
+        <div class="detail-header">
+          <div>
+            <span class="detail-eyebrow">REAGENDAMENTO</span>
+            <h3 class="detail-title">Deseja reagendar esta consulta?</h3>
+          </div>
+          <button type="button" class="detail-close" (click)="closeRescheduleConfirm()" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <p class="reschedule-desc">
+          Consulta atual: <strong>{{ formatSpecialty(target.specialty) }}</strong> em
+          <strong>{{ formatFullDateTime(target.scheduledAt) }}</strong>.<br /><br />
+          Ao concluir o novo agendamento, esta consulta será cancelada automaticamente.
+        </p>
+
+        <div class="detail-footer">
+          <button type="button" class="btn-outline" (click)="closeRescheduleConfirm()">Voltar</button>
+          <button type="button" class="btn-primary" (click)="confirmReschedule()">Escolher novo horário</button>
         </div>
       </div>
     </div>

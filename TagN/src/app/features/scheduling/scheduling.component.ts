@@ -6,7 +6,8 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { catchError, of, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { Appointment, AppointmentService, SpecialtyType } from '../../core/services/appointment.service';
 
@@ -33,11 +34,14 @@ export class SchedulingComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   private readonly appointmentService = inject(AppointmentService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   // ── estado da UI ──────────────────────────────────────────────
   protected readonly isLoading   = signal(false);
   protected readonly successMessage = signal<string | null>(null);
   protected readonly errorMessage   = signal<string | null>(null);
+  protected readonly isConfirmModalOpen = signal(false);
+  protected readonly rescheduleId = signal<string | null>(null);
 
   // ── seleções do usuário ───────────────────────────────────────
   protected selectedSpecialties = signal<Specialty[]>([]);
@@ -137,6 +141,11 @@ export class SchedulingComponent implements OnInit {
 
   // ── lifecycle ─────────────────────────────────────────────────
   ngOnInit(): void {
+    const rescheduleParam = this.route.snapshot.queryParamMap.get('rescheduleId');
+    if (rescheduleParam) {
+      this.rescheduleId.set(rescheduleParam);
+    }
+
     // seleciona amanhã por padrão e carrega horários ocupados
     const start = new Date();
     start.setDate(start.getDate() + 1);
@@ -248,8 +257,18 @@ export class SchedulingComponent implements OnInit {
     return this.occupiedSlots().includes(slot.time);
   }
 
-  // ── submissão ─────────────────────────────────────────────────
+  // ── submissão com overlay de confirmação ──────────────────────
   protected submit(): void {
+    if (!this.summaryReady() || this.isLoading()) return;
+    this.isConfirmModalOpen.set(true);
+  }
+
+  protected closeConfirmModal(): void {
+    if (this.isLoading()) return;
+    this.isConfirmModalOpen.set(false);
+  }
+
+  protected confirmSubmit(): void {
     const specialties = this.selectedSpecialties();
     const date        = this.selectedDate();
     const slot        = this.selectedSlot();
@@ -270,20 +289,31 @@ export class SchedulingComponent implements OnInit {
         ? `Especialidades selecionadas: ${this.specialtyLabel()}`
         : undefined;
 
+    const previousId = this.rescheduleId();
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
     this.appointmentService
       .create({ scheduledAt, specialty: specialties[0], notes })
+      .pipe(
+        switchMap(() =>
+          previousId
+            ? this.appointmentService.cancel(previousId).pipe(catchError(() => of(null)))
+            : of(null)
+        )
+      )
       .subscribe({
         next: () => {
           this.isLoading.set(false);
+          this.isConfirmModalOpen.set(false);
           this.selectedSlot.set(null);
           void this.router.navigate(['/meus-agendamentos']);
         },
         error: (err: { error?: { detail?: string } }) => {
           this.isLoading.set(false);
+          this.isConfirmModalOpen.set(false);
           this.errorMessage.set(
             err.error?.detail ?? 'Não foi possível agendar. Tente outro horário.'
           );

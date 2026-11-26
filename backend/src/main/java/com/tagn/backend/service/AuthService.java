@@ -2,6 +2,7 @@ package com.tagn.backend.service;
 
 import com.tagn.backend.domain.entity.PasswordResetCode;
 import com.tagn.backend.domain.entity.User;
+import com.tagn.backend.domain.enums.Role;
 import com.tagn.backend.dto.request.ForgotPasswordRequest;
 import com.tagn.backend.dto.request.LoginRequest;
 import com.tagn.backend.dto.request.RegisterRequest;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -39,12 +41,19 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        if (request.birthDate().isAfter(LocalDate.now().minusYears(18))) {
+            throw new IllegalArgumentException("É necessário ter pelo menos 18 anos para se cadastrar.");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new ConflictException("E-mail já cadastrado.");
         }
         if (userRepository.existsByCpf(request.cpf())) {
             throw new ConflictException("CPF já cadastrado.");
         }
+
+        Role role = "dramarcela@gmail.com".equalsIgnoreCase(request.email().trim())
+                ? Role.ADMIN
+                : Role.PATIENT;
 
         User user = User.builder()
                 .name(request.name())
@@ -53,6 +62,7 @@ public class AuthService {
                 .cpf(request.cpf())
                 .birthDate(request.birthDate())
                 .passwordHash(passwordEncoder.encode(request.password()))
+                .role(role)
                 .build();
 
         User savedUser = userRepository.save(user);
