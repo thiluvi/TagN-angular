@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import {
   Appointment,
@@ -33,7 +34,7 @@ type ActionType = 'CONFIRM' | 'CANCEL' | 'COMPLETE';
 interface PendingActionModal {
   appointment: Appointment;
   type: ActionType;
-  step: 'confirm' | 'note';
+  step: 'confirm' | 'note' | 'images';
 }
 
 @Component({
@@ -46,6 +47,7 @@ interface PendingActionModal {
 export class DoctorAppointmentsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   private readonly appointmentService = inject(AppointmentService);
+  private readonly router = inject(Router);
 
   protected readonly appointments = signal<Appointment[]>([]);
   protected readonly isLoading = signal(true);
@@ -68,6 +70,9 @@ export class DoctorAppointmentsComponent implements OnInit {
   // Overlays
   protected readonly actionModal = signal<PendingActionModal | null>(null);
   protected readonly actionNote = signal('');
+  protected readonly pendingFinalNote = signal<string | undefined>(undefined);
+  protected readonly actionImages = signal<string[]>([]);
+  protected readonly modalError = signal<string | null>(null);
   protected readonly selectedDetail = signal<Appointment | null>(null);
 
   protected readonly specialtyOptions: readonly { value: SpecialtyType; label: string }[] = [
@@ -226,6 +231,9 @@ export class DoctorAppointmentsComponent implements OnInit {
   // ── Fluxo de Ações com Overlays ───────────────────────────────
   protected startAction(apt: Appointment, type: ActionType): void {
     this.actionNote.set('');
+    this.pendingFinalNote.set(undefined);
+    this.actionImages.set([]);
+    this.modalError.set(null);
     this.actionModal.set({ appointment: apt, type, step: 'confirm' });
   }
 
@@ -233,6 +241,9 @@ export class DoctorAppointmentsComponent implements OnInit {
     if (this.isSubmitting()) return;
     this.actionModal.set(null);
     this.actionNote.set('');
+    this.pendingFinalNote.set(undefined);
+    this.actionImages.set([]);
+    this.modalError.set(null);
   }
 
   protected confirmFirstStep(): void {
@@ -247,26 +258,102 @@ export class DoctorAppointmentsComponent implements OnInit {
     const modal = this.actionModal();
     if (!modal || this.isSubmitting()) return;
 
+    const note = includeNote ? this.actionNote().trim() || undefined : undefined;
+
+    if (modal.type === 'COMPLETE') {
+      this.pendingFinalNote.set(note);
+      this.actionModal.set({ ...modal, step: 'images' });
+      return;
+    }
+
     const statusMap: Record<ActionType, AppointmentStatus> = {
       CONFIRM: 'CONFIRMED',
       CANCEL: 'CANCELLED',
       COMPLETE: 'COMPLETED',
     };
     const targetStatus = statusMap[modal.type];
-    const note = includeNote ? this.actionNote().trim() : undefined;
 
-    this.executeStatusUpdate(modal.appointment.id, targetStatus, note || undefined);
+    this.executeStatusUpdate(modal.appointment.id, targetStatus, note);
+  }
+
+  protected onActionImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    Array.from(input.files).forEach((file) => {
+      if (!file.type.startsWith('image/')) return;
+      this.compressImage(file, (dataUrl) => {
+        this.actionImages.update((imgs) => [...imgs, dataUrl]);
+      });
+    });
+    input.value = '';
+  }
+
+  private compressImage(file: File, onDone: (dataUrl: string) => void): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== 'string') return;
+
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 1280;
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width >= height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          onDone(result);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        onDone(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => onDone(result);
+      img.src = result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  protected removeActionImage(index: number): void {
+    this.actionImages.update((imgs) => imgs.filter((_, i) => i !== index));
+  }
+
+  protected submitWithImages(includeImages: boolean): void {
+    const modal = this.actionModal();
+    if (!modal || this.isSubmitting()) return;
+
+    const images = includeImages ? this.actionImages() : undefined;
+    this.executeStatusUpdate(
+      modal.appointment.id,
+      'COMPLETED',
+      this.pendingFinalNote(),
+      images && images.length > 0 ? images : undefined
+    );
   }
 
   private executeStatusUpdate(
     id: string,
     status: AppointmentStatus,
-    notes?: string
+    notes?: string,
+    images?: string[]
   ): void {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
+    this.modalError.set(null);
 
-    this.appointmentService.updateStatus(id, status, notes).subscribe({
+    this.appointmentService.updateStatus(id, status, notes, images).subscribe({
       next: (updated) => {
         this.appointments.update((list) =>
           list.map((item) => (item.id === updated.id ? updated : item))
@@ -274,20 +361,25 @@ export class DoctorAppointmentsComponent implements OnInit {
         this.isSubmitting.set(false);
         this.actionModal.set(null);
         this.actionNote.set('');
+        this.pendingFinalNote.set(undefined);
+        this.actionImages.set([]);
+        this.modalError.set(null);
       },
-      error: (err: { error?: { detail?: string } }) => {
+      error: (err: { error?: { detail?: string; message?: string } }) => {
         this.isSubmitting.set(false);
-        this.actionModal.set(null);
-        this.errorMessage.set(
-          err.error?.detail ?? 'Não foi possível atualizar o status do agendamento.'
-        );
+        const msg =
+          err.error?.detail ??
+          err.error?.message ??
+          'Não foi possível atualizar o status do agendamento.';
+        this.modalError.set(msg);
+        this.errorMessage.set(msg);
       },
     });
   }
 
   // ── Detalhes ──────────────────────────────────────────────────
   protected openDetails(apt: Appointment): void {
-    this.selectedDetail.set(apt);
+    void this.router.navigate(['/consulta', apt.id]);
   }
 
   protected closeDetails(): void {

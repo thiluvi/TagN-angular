@@ -135,7 +135,7 @@ export class MyAppointmentsComponent implements OnInit {
   }
 
   protected openDetails(apt: Appointment): void {
-    this.selectedDetail.set(apt);
+    void this.router.navigate(['/consulta', apt.id]);
   }
 
   protected closeDetails(): void {

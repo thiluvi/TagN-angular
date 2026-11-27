@@ -5,6 +5,8 @@ import com.tagn.backend.domain.entity.User;
 import com.tagn.backend.domain.enums.AppointmentStatus;
 import com.tagn.backend.domain.enums.Role;
 import com.tagn.backend.dto.request.AppointmentRequest;
+import com.tagn.backend.dto.request.UpdateImagesRequest;
+import com.tagn.backend.dto.request.UpdateNotesRequest;
 import com.tagn.backend.dto.request.UpdateStatusRequest;
 import com.tagn.backend.dto.response.AppointmentResponse;
 import com.tagn.backend.exception.ConflictException;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,6 +105,77 @@ public class AppointmentService {
                             ? existing + "\n" + newNote
                             : newNote
             );
+        }
+
+        if (isAdmin && request.images() != null && !request.images().isEmpty()) {
+            if (appointment.getImages() == null) {
+                appointment.setImages(new ArrayList<>(request.images()));
+            } else {
+                appointment.getImages().clear();
+                appointment.getImages().addAll(request.images());
+            }
+        }
+
+        return AppointmentResponse.from(appointmentRepository.save(appointment));
+    }
+
+    @Transactional(readOnly = true)
+    public AppointmentResponse getById(UUID id, User actor) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não encontrado."));
+
+        boolean isAdmin = actor != null && actor.getRole() == Role.ADMIN;
+        boolean isOwner = actor != null && appointment.getUser().getId().equals(actor.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("Você não tem permissão para visualizar este agendamento.");
+        }
+
+        return AppointmentResponse.from(appointment);
+    }
+
+    @Transactional
+    public AppointmentResponse updateNotes(UUID id, UpdateNotesRequest request, User actor) {
+        if (actor == null || actor.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Acesso restrito a administradores.");
+        }
+
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não encontrado."));
+
+        if (appointment.getStatus() != AppointmentStatus.CONFIRMED
+                && appointment.getStatus() != AppointmentStatus.COMPLETED
+                && appointment.getStatus() != AppointmentStatus.CANCELLED) {
+            throw new IllegalArgumentException("Notas só podem ser editadas em consultas confirmadas, finalizadas ou canceladas.");
+        }
+
+        String normalized = request.notes() != null ? request.notes().trim() : null;
+        appointment.setNotes(normalized != null && !normalized.isEmpty() ? normalized : null);
+
+        return AppointmentResponse.from(appointmentRepository.save(appointment));
+    }
+
+    @Transactional
+    public AppointmentResponse updateImages(UUID id, UpdateImagesRequest request, User actor) {
+        if (actor == null || actor.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Acesso restrito a administradores.");
+        }
+
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não encontrado."));
+
+        if (appointment.getStatus() != AppointmentStatus.COMPLETED) {
+            throw new IllegalArgumentException("Fotos só podem ser alteradas em consultas finalizadas.");
+        }
+
+        List<String> updatedImages = request.images() != null
+                ? request.images()
+                : List.of();
+        if (appointment.getImages() == null) {
+            appointment.setImages(new ArrayList<>(updatedImages));
+        } else {
+            appointment.getImages().clear();
+            appointment.getImages().addAll(updatedImages);
         }
 
         return AppointmentResponse.from(appointmentRepository.save(appointment));

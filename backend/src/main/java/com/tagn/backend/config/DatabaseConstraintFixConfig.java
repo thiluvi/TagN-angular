@@ -27,6 +27,11 @@ public class DatabaseConstraintFixConfig {
                 jdbcTemplate.update(
                         "UPDATE users SET role = 'ADMIN' WHERE LOWER(email) = 'dramarcela@gmail.com' AND role <> 'ADMIN'"
                 );
+                jdbcTemplate.execute(
+                        "CREATE TABLE IF NOT EXISTS appointment_photos (" +
+                        "appointment_id UUID NOT NULL REFERENCES appointments(id) ON DELETE CASCADE, " +
+                        "image_data TEXT)"
+                );
             } catch (Exception ex) {
                 log.warn("Could not update appointments check constraints: {}", ex.getMessage());
             }

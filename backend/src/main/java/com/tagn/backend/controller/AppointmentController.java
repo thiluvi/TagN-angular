@@ -2,6 +2,8 @@ package com.tagn.backend.controller;
 
 import com.tagn.backend.domain.entity.User;
 import com.tagn.backend.dto.request.AppointmentRequest;
+import com.tagn.backend.dto.request.UpdateImagesRequest;
+import com.tagn.backend.dto.request.UpdateNotesRequest;
 import com.tagn.backend.dto.request.UpdateStatusRequest;
 import com.tagn.backend.dto.response.AppointmentResponse;
 import com.tagn.backend.service.AppointmentService;
@@ -56,5 +58,31 @@ public class AppointmentController {
             @AuthenticationPrincipal User user
     ) {
         return appointmentService.updateStatus(id, request, user);
+    }
+
+    @GetMapping("/{id}")
+    public AppointmentResponse getById(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User user
+    ) {
+        return appointmentService.getById(id, user);
+    }
+
+    @PutMapping("/{id}/notes")
+    public AppointmentResponse updateNotes(
+            @PathVariable UUID id,
+            @RequestBody UpdateNotesRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return appointmentService.updateNotes(id, request, user);
+    }
+
+    @PutMapping("/{id}/images")
+    public AppointmentResponse updateImages(
+            @PathVariable UUID id,
+            @RequestBody UpdateImagesRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return appointmentService.updateImages(id, request, user);
     }
 }

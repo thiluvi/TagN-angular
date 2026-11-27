@@ -66,7 +66,16 @@ export const routes: Routes = [
             (m) => m.DoctorAppointmentsComponent
           ),
         data: { headerTitle: 'GESTÃO DE AGENDAMENTOS' },
-        title: 'Gestão de Agendamentos — Drª. Marcela Medeiros',
+        title: 'Gestão de Agendamentos — Integra Clínica',
+      },
+      {
+        path: 'consulta/:id',
+        loadComponent: () =>
+          import('./features/appointment-detail/appointment-detail.component').then(
+            (m) => m.AppointmentDetailComponent
+          ),
+        data: { headerTitle: 'DETALHES DA CONSULTA' },
+        title: 'Detalhes da Consulta — Integra Clínica',
       },
       {
         path: 'conta',

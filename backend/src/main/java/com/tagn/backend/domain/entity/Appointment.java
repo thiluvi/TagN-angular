@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +40,12 @@ public class Appointment {
 
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "appointment_photos", joinColumns = @JoinColumn(name = "appointment_id"))
+    @Column(name = "image_data", columnDefinition = "TEXT")
+    @Builder.Default
+    private List<String> images = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     @Builder.Default

@@ -424,7 +424,7 @@
               }
             </button>
           </div>
-        } @else {
+        } @else if (modal.step === 'note') {
           <span class="modal-eyebrow">OBSERVAÇÃO</span>
           <h3 class="modal-title">Deseja adicionar alguma nota ao agendamento?</h3>
           <p class="modal-desc">
@@ -449,7 +449,63 @@
               [disabled]="isSubmitting()"
               (click)="submitWithNote(true)"
             >
-              {{ isSubmitting() ? 'Salvando...' : 'Salvar e concluir' }}
+              {{ modal.type === 'COMPLETE' ? 'Continuar' : (isSubmitting() ? 'Salvando...' : 'Salvar e concluir') }}
+            </button>
+          </div>
+        } @else {
+          <span class="modal-eyebrow">IMAGENS DO ATENDIMENTO</span>
+          <h3 class="modal-title">Deseja adicionar imagens ao agendamento?</h3>
+          <p class="modal-desc">
+            Você pode anexar fotos do procedimento ao registro da consulta ou finalizar sem imagens.
+          </p>
+
+          <label class="upload-box">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              (change)="onActionImagesSelected($event)"
+            />
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span>Selecionar imagens</span>
+          </label>
+
+          @if (actionImages().length > 0) {
+            <div class="preview-grid">
+              @for (img of actionImages(); track $index) {
+                <div class="preview-item">
+                  <img [src]="img" alt="Prévia da imagem" class="preview-img" />
+                  <button
+                    type="button"
+                    class="preview-remove"
+                    (click)="removeActionImage($index)"
+                    aria-label="Remover imagem"
+                  >×</button>
+                </div>
+              }
+            </div>
+          }
+
+          @if (modalError()) {
+            <div class="alert alert--error" role="alert">{{ modalError() }}</div>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="btn-outline" [disabled]="isSubmitting()" (click)="submitWithImages(false)">
+              Não adicionar
+            </button>
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="isSubmitting()"
+              (click)="submitWithImages(true)"
+            >
+              {{ isSubmitting() ? 'Finalizando...' : 'Salvar e finalizar' }}
             </button>
           </div>
         }

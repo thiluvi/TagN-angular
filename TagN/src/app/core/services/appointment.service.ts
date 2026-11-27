@@ -20,6 +20,7 @@ export interface Appointment {
   readonly specialty: SpecialtyType;
   readonly status: AppointmentStatus;
   readonly notes?: string;
+  readonly images?: readonly string[];
   readonly createdAt: string;
 }
 
@@ -49,15 +50,29 @@ export class AppointmentService {
     return this.http.get<Appointment[]>(`${API_BASE}/appointments`);
   }
 
+  getById(id: string): Observable<Appointment> {
+    return this.http.get<Appointment>(`${API_BASE}/appointments/${id}`);
+  }
+
   updateStatus(
     id: string,
     status: AppointmentStatus,
-    notes?: string
+    notes?: string,
+    images?: string[]
   ): Observable<Appointment> {
     return this.http.put<Appointment>(`${API_BASE}/appointments/${id}/status`, {
       status,
       ...(notes ? { notes } : {}),
+      ...(images && images.length > 0 ? { images } : {}),
     });
+  }
+
+  updateNotes(id: string, notes: string): Observable<Appointment> {
+    return this.http.put<Appointment>(`${API_BASE}/appointments/${id}/notes`, { notes });
+  }
+
+  updateImages(id: string, images: string[]): Observable<Appointment> {
+    return this.http.put<Appointment>(`${API_BASE}/appointments/${id}/images`, { images });
   }
 
   getOccupiedSlots(dateIso: string): Observable<string[]> {

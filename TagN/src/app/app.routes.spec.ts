@@ -182,4 +182,16 @@ describe('App Routing & Schedule Button', () => {
     expect(router.url).toBe('/politicas-de-privacidade');
     expect(fixture.nativeElement.querySelector('app-privacy')).toBeTruthy();
   });
+
+  it('should navigate to /consulta/:id and render AppointmentDetailComponent', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigate(['/consulta/abc-123']);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(router.url).toBe('/consulta/abc-123');
+    expect(fixture.nativeElement.querySelector('app-appointment-detail')).toBeTruthy();
+  });
 });

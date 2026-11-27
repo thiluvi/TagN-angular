@@ -1,0 +1,190 @@
+<section class="detail-page">
+  <div class="top-bar">
+    <a [routerLink]="backRoute()" class="btn-back">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
+      <span>Voltar</span>
+    </a>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert--error" role="alert">{{ errorMessage() }}</div>
+  }
+  @if (successMessage()) {
+    <div class="alert alert--success" role="alert">{{ successMessage() }}</div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-box">Carregando informações da consulta...</div>
+  } @else if (appointment(); as apt) {
+    <header class="page-header">
+      <div>
+        <span class="page-eyebrow">{{ formatCode(apt) }}</span>
+        <h1 class="page-title">{{ formatSpecialty(apt.specialty) }}</h1>
+        <p class="page-subtitle">{{ formatFullDateTime(apt.scheduledAt) }}</p>
+      </div>
+
+      <span
+        class="status-pill"
+        [class.status-pill--confirmed]="apt.status === 'CONFIRMED'"
+        [class.status-pill--pending]="apt.status === 'PENDING'"
+        [class.status-pill--done]="apt.status === 'COMPLETED'"
+        [class.status-pill--cancelled]="apt.status === 'CANCELLED'"
+      >
+        {{ formatStatusLabel(apt) }}
+      </span>
+    </header>
+
+    <div class="detail-grid">
+      <!-- ── INFORMAÇÕES GERAIS ────────────────────────────── -->
+      <section class="card" aria-labelledby="info-heading">
+        <h2 id="info-heading" class="card-title">Informações da consulta</h2>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Identificador</span>
+            <strong class="info-value">{{ formatCode(apt) }}</strong>
+          </div>
+          @if (authService.isAdmin()) {
+            <div class="info-row">
+              <span class="info-label">Paciente</span>
+              <strong class="info-value">{{ apt.userName }}</strong>
+            </div>
+          }
+          <div class="info-row">
+            <span class="info-label">Especialidade</span>
+            <strong class="info-value">{{ formatSpecialty(apt.specialty) }}</strong>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Data e horário</span>
+            <strong class="info-value">{{ formatFullDateTime(apt.scheduledAt) }}</strong>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Status</span>
+            <strong class="info-value">{{ formatStatusLabel(apt) }}</strong>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Solicitado em</span>
+            <strong class="info-value">{{ formatCreatedAt(apt.createdAt) }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── NOTAS E OBSERVAÇÕES ───────────────────────────── -->
+      <section class="card" aria-labelledby="notes-heading">
+        <div class="card-header-row">
+          <h2 id="notes-heading" class="card-title">Notas e observações</h2>
+          @if (canEditNotes() && !isEditingNotes()) {
+            <button type="button" class="btn-outline" (click)="startEditNotes()">
+              Editar notas
+            </button>
+          }
+        </div>
+
+        @if (isEditingNotes()) {
+          <textarea
+            class="notes-textarea"
+            rows="5"
+            placeholder="Escreva observações da consulta..."
+            [ngModel]="notesDraft()"
+            (ngModelChange)="notesDraft.set($event)"
+          ></textarea>
+          <div class="edit-actions">
+            <button type="button" class="btn-outline" [disabled]="isSavingNotes()" (click)="cancelEditNotes()">
+              Cancelar
+            </button>
+            <button type="button" class="btn-primary" [disabled]="isSavingNotes()" (click)="saveNotes()">
+              {{ isSavingNotes() ? 'Salvando...' : 'Salvar notas' }}
+            </button>
+          </div>
+        } @else if (apt.notes) {
+          <p class="notes-box">{{ apt.notes }}</p>
+        } @else {
+          <p class="empty-note">Nenhuma nota registrada até o momento.</p>
+        }
+      </section>
+    </div>
+
+    <!-- ── IMAGENS DA CONSULTA ────────────────────────────── -->
+    @if ((apt.images && apt.images.length > 0) || canEditImages()) {
+      <section class="card images-card" aria-labelledby="images-heading">
+        <div class="card-header-row">
+          <div>
+            <h2 id="images-heading" class="card-title">Imagens da consulta</h2>
+            <p class="card-subtitle">Registros visuais anexados ao atendimento.</p>
+          </div>
+
+          @if (canEditImages() && !isEditingImages()) {
+            <button type="button" class="btn-outline" (click)="startEditImages()">
+              Alterar fotos
+            </button>
+          }
+        </div>
+
+        @if (isEditingImages()) {
+          <label class="upload-box">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              (change)="onImagesSelected($event)"
+            />
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span>Adicionar novas imagens</span>
+          </label>
+
+          @if (imagesDraft().length > 0) {
+            <div class="gallery-grid">
+              @for (img of imagesDraft(); track $index) {
+                <div class="gallery-item">
+                  <img [src]="img" alt="Imagem do atendimento" class="gallery-img" />
+                  <button
+                    type="button"
+                    class="remove-img-btn"
+                    (click)="removeDraftImage($index)"
+                    aria-label="Remover imagem"
+                  >×</button>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty-note">Nenhuma foto selecionada.</p>
+          }
+
+          <div class="edit-actions">
+            <button type="button" class="btn-outline" [disabled]="isSavingImages()" (click)="cancelEditImages()">
+              Cancelar
+            </button>
+            <button type="button" class="btn-primary" [disabled]="isSavingImages()" (click)="saveImages()">
+              {{ isSavingImages() ? 'Salvando...' : 'Salvar fotos' }}
+            </button>
+          </div>
+        } @else if (apt.images && apt.images.length > 0) {
+          <div class="gallery-grid">
+            @for (img of apt.images; track $index) {
+              <button type="button" class="gallery-item gallery-item--clickable" (click)="openPreview(img)">
+                <img [src]="img" alt="Imagem da consulta" class="gallery-img" />
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="empty-note">Nenhuma imagem anexada a esta consulta.</p>
+        }
+      </section>
+    }
+  }
+
+  @if (previewImage(); as imgUrl) {
+    <div class="lightbox-backdrop" (click)="closePreview()" role="dialog" aria-modal="true" aria-label="Visualizar imagem">
+      <button type="button" class="lightbox-close" (click)="closePreview()" aria-label="Fechar imagem">×</button>
+      <img [src]="imgUrl" alt="Imagem ampliada da consulta" class="lightbox-img" (click)="$event.stopPropagation()" />
+    </div>
+  }
+</section>
