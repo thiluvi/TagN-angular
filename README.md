@@ -67,7 +67,7 @@ Para rodar o projeto, você precisará de **dois terminais abertos**: um para o 
 
 ### Terminal 1: Backend (Spring Boot)
 
-#### Opção A — Pelo Terminal (Recomendado para todos):
+#### Pelo Terminal (Recomendado para todos):
 
 * **No Windows (PowerShell):**
   ```powershell
@@ -92,16 +92,6 @@ O backend estará ativo em: **`http://localhost:8080`**
 
 ---
 
-#### Opção B — Pelo botão "Play" da IDE (IntelliJ IDEA):
-
-Por padrão, a IDE não carrega arquivos `.env` automaticamente. Para rodar direto pelo `BackendApplication.java`:
-1. Instale o plugin **EnvFile** (*Settings → Plugins → Marketplace → busque por "EnvFile"*).
-2. Na barra superior, clique na configuração de execução do `BackendApplication` → **Edit Configurations...**.
-3. Na aba **EnvFile**, marque a opção **Enable EnvFile**.
-4. Clique no ícone `+` e selecione o arquivo `backend/.env`.
-5. Agora basta clicar no botão verde de **Play** ou **Debug**!
-
----
 
 ### Terminal 2: Frontend (Angular)
 
@@ -122,7 +112,7 @@ O frontend estará disponível no navegador em: **`http://localhost:4200`**
 
 ---
 
-## 🧪 3. Como Testar as Funcionalidades
+## 🧪 3. Como Testar as Funcionalidades (Foram listadas apenas algumas abaixo!)
 
 ### A. Cadastro de Paciente:
 - Acesse `http://localhost:4200` e clique no ícone de perfil no topo à direita.
@@ -155,34 +145,4 @@ O frontend estará disponível no navegador em: **`http://localhost:4200`**
 
 ---
 
-## 🛠️ Comandos Úteis
 
-### Frontend (`TagN/`):
-```bash
-# Rodar todos os testes unitários (Vitest / Angular build):
-npm test -- --watch=false
-
-# Gerar build de produção otimizado:
-npm run build
-```
-
-### Backend (`backend/`):
-```bash
-# Compilar e validar tipos sem subir o servidor:
-.\mvnw.cmd compile
-```
-
----
-
-## 📌 Endpoints da API REST (Backend)
-
-| Método | Endpoint | Autenticação | Descrição |
-|---|---|---|---|
-| `GET` | `/api/health` | Pública | Status da API |
-| `POST` | `/api/auth/register` | Pública | Cadastro de novo paciente |
-| `POST` | `/api/auth/login` | Pública | Autenticação JWT |
-| `POST` | `/api/auth/forgot-password` | Pública | Solicitação de código de 6 dígitos |
-| `POST` | `/api/auth/reset-password` | Pública | Validação do código e troca de senha |
-| `GET` | `/api/users/me` | Bearer Token | Dados do paciente logado |
-| `POST` | `/api/appointments` | Bearer Token | Criar novo agendamento |
-| `GET` | `/api/appointments/me` | Bearer Token | Listar agendamentos do paciente |
