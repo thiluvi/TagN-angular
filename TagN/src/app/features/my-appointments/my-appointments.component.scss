@@ -771,3 +771,30 @@
   line-height: $line-height-body-sm;
   margin: 0;
 }
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  height: 40px;
+  padding: 0 $spacing-lg;
+  background-color: #8c2828;
+  color: $color-text-light;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-family: inherit;
+  font-size: $font-size-button;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #701e1e;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

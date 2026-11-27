@@ -174,7 +174,7 @@
                           type="button"
                           class="btn-cancel-link"
                           [disabled]="cancellingId() === apt.id"
-                          (click)="cancelAppointment(apt)"
+                          (click)="openCancelConfirm(apt)"
                         >
                           {{ cancellingId() === apt.id ? 'Cancelando...' : 'Cancelar agendamento' }}
                         </button>
@@ -340,7 +340,7 @@
               type="button"
               class="btn-cancel-link"
               [disabled]="cancellingId() === detail.id"
-              (click)="cancelAppointment(detail)"
+              (click)="openCancelConfirm(detail)"
             >
               {{ cancellingId() === detail.id ? 'Cancelando...' : 'Cancelar agendamento' }}
             </button>
@@ -377,6 +377,57 @@
         <div class="detail-footer">
           <button type="button" class="btn-outline" (click)="closeRescheduleConfirm()">Voltar</button>
           <button type="button" class="btn-primary" (click)="confirmReschedule()">Escolher novo horário</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── OVERLAY DE CONFIRMAÇÃO DE CANCELAMENTO ────────────── -->
+  @if (cancelTarget(); as target) {
+    <div class="detail-backdrop" (click)="closeCancelConfirm()" role="dialog" aria-modal="true" aria-label="Confirmar cancelamento">
+      <div class="detail-modal" (click)="$event.stopPropagation()">
+        <div class="detail-header">
+          <div>
+            <span class="detail-eyebrow">CANCELAMENTO</span>
+            <h3 class="detail-title">Deseja cancelar esta consulta?</h3>
+          </div>
+          <button
+            type="button"
+            class="detail-close"
+            [disabled]="cancellingId() === target.id"
+            (click)="closeCancelConfirm()"
+            aria-label="Fechar"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <p class="reschedule-desc">
+          Consulta: <strong>{{ formatSpecialty(target.specialty) }}</strong> em
+          <strong>{{ formatFullDateTime(target.scheduledAt) }}</strong>.<br /><br />
+          Essa ação não poderá ser desfeita.
+        </p>
+
+        <div class="detail-footer">
+          <button
+            type="button"
+            class="btn-outline"
+            [disabled]="cancellingId() === target.id"
+            (click)="closeCancelConfirm()"
+          >
+            Voltar
+          </button>
+          <button
+            type="button"
+            class="btn-danger"
+            [disabled]="cancellingId() === target.id"
+            (click)="confirmCancel()"
+          >
+            {{ cancellingId() === target.id ? 'Cancelando...' : 'Confirmar cancelamento' }}
+          </button>
         </div>
       </div>
     </div>

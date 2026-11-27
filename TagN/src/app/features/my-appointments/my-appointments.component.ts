@@ -75,6 +75,7 @@ export class MyAppointmentsComponent implements OnInit {
   protected readonly activeTab = signal<'proximos' | 'historico'>('proximos');
   protected readonly selectedDetail = signal<Appointment | null>(null);
   protected readonly rescheduleTarget = signal<Appointment | null>(null);
+  protected readonly cancelTarget = signal<Appointment | null>(null);
   protected readonly cancellingId = signal<string | null>(null);
 
   protected readonly upcomingAppointments = computed(() => {
@@ -141,6 +142,22 @@ export class MyAppointmentsComponent implements OnInit {
     this.selectedDetail.set(null);
   }
 
+  protected openCancelConfirm(apt: Appointment): void {
+    if (this.cancellingId()) return;
+    this.cancelTarget.set(apt);
+  }
+
+  protected closeCancelConfirm(): void {
+    if (this.cancellingId()) return;
+    this.cancelTarget.set(null);
+  }
+
+  protected confirmCancel(): void {
+    const target = this.cancelTarget();
+    if (!target) return;
+    this.cancelAppointment(target);
+  }
+
   protected cancelAppointment(apt: Appointment): void {
     if (this.cancellingId()) return;
     this.cancellingId.set(apt.id);
@@ -152,12 +169,14 @@ export class MyAppointmentsComponent implements OnInit {
           list.map((item) => (item.id === updated.id ? updated : item))
         );
         this.cancellingId.set(null);
+        this.cancelTarget.set(null);
         if (this.selectedDetail()?.id === updated.id) {
           this.selectedDetail.set(updated);
         }
       },
       error: () => {
         this.cancellingId.set(null);
+        this.cancelTarget.set(null);
         this.errorMessage.set('Não foi possível cancelar o agendamento. Tente novamente.');
       },
     });
